@@ -1,4 +1,4 @@
-anyio==4.0.0
+anyio
 APScheduler==3.6.3
 cachetools==4.2.2
 certifi==2023.7.22
