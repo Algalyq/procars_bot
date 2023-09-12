@@ -2,7 +2,9 @@ import os
 from dotenv import load_dotenv
 import openai
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Updater, CommandHandler, CallbackContext, CallbackQueryHandler
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext, CallbackQueryHandler
+
 
 # Load environment variables from .env file
 load_dotenv()
@@ -42,6 +44,7 @@ car_choices = {
     # ... (other companies)
 }
 
+previous_message = {}
 # Create an inline keyboard with car companies
 def create_company_keyboard():
     keyboard = []
@@ -68,11 +71,43 @@ def create_complete_set_keyboard(company_name, model_name):
         if complete_sets:
             for set_name in complete_sets:
                 keyboard.append([InlineKeyboardButton(set_name, callback_data=f"show_set_{company_name}_{model_name}_{set_name}")])
+    keyboard.append([InlineKeyboardButton("Go Back", callback_data=f"show_company_{company_name}")])
     return keyboard
+
+# Define a dictionary to store user states
+user_states = {}
 
 def start(update: Update, context: CallbackContext):
     keyboard = create_company_keyboard()
     update.message.reply_text("Please select a car company:", reply_markup=InlineKeyboardMarkup(keyboard))
+    # Set the initial state to 'SELECT_COMPANY'
+    user_states[update.message.chat_id] = 'SELECT_COMPANY'
+def update_message(update: Update, context: CallbackContext, text_to: str, reply_markup=None):
+    query = update.callback_query
+
+    if query.message:
+        try:
+            context.bot.edit_message_text(
+                chat_id=query.message.chat_id,
+                message_id=query.message.message_id,
+                text=text_to,
+                reply_markup=reply_markup,
+                parse_mode="Markdown",  # You can specify the parse_mode here if needed
+            )
+        except Exception as e:
+            print(f"Error updating message: {e}")
+    else:
+        # If the message doesn't exist, send a new one
+        try:
+            context.bot.send_message(
+                chat_id=query.from_user.id,
+                text=text_to,
+                reply_markup=reply_markup,
+                parse_mode="Markdown",  # You can specify the parse_mode here if needed
+            )
+        except Exception as e:
+            print(f"Error sending message: {e}")
+
 
 def show_company_models(update: Update, context: CallbackContext):
     query = update.callback_query
@@ -81,12 +116,16 @@ def show_company_models(update: Update, context: CallbackContext):
 
     if company_details:
         keyboard = create_model_keyboard(company_name)
-        query.message.reply_text(f"Please select a car model from {company_name}:", reply_markup=InlineKeyboardMarkup(keyboard))
+        update_message(update, context, f"Please select a car model from {company_name}:", InlineKeyboardMarkup(keyboard))
+        # Update the user's state to 'SELECT_MODEL'
+        user_states[query.message.chat_id] = 'SELECT_MODEL'
     else:
         query.answer(text="Company not found")
 
+
 def show_model_description(update: Update, context: CallbackContext):
     query = update.callback_query
+    print(query.data)
     _, company_name, model_name = query.data.split('_')[1:]
     company_details = car_choices.get(company_name)
 
@@ -96,14 +135,24 @@ def show_model_description(update: Update, context: CallbackContext):
         image_url = model_details["image_url"]
         year = model_details["year"]
 
-        model_info = f"Model: {model_name}\nDescription: {description}\nYear: {year}"
-        context.bot.send_photo(chat_id=query.message.chat_id, photo=image_url, caption=model_info)
-
         keyboard = create_complete_set_keyboard(company_name, model_name)
-        if keyboard:
-            query.message.reply_text("Please select a complete set:", reply_markup=InlineKeyboardMarkup(keyboard))
+        # Create a message with car information
+        model_info = f"Model: {model_name}\nDescription: {description}\nYear: {year}\nPlease select a complete set:"
+
+        # Check if there's a previous message
+        if "chat_id" in previous_message:
+            # Update the existing message to avoid sending a new one
+            query.edit_message_caption(caption=model_info)
+            q
+        else:
+            # Send the message as a new caption along with the car image
+            message = context.bot.send_photo(chat_id=query.message.chat_id, photo=image_url, caption=model_info, reply_markup=InlineKeyboardMarkup(keyboard))
+            # Store the message details in the previous_message dictionary
+            previous_message["chat_id"] = query.message.chat_id
+            previous_message["message_id"] = message.message_id
     else:
         query.answer(text="Model not found")
+
 
 def show_complete_set_details(update: Update, context: CallbackContext):
     query = update.callback_query
@@ -120,17 +169,30 @@ def show_complete_set_details(update: Update, context: CallbackContext):
 
             set_info = f"Complete Set: {set_name}\nDescription: {description}\nPrice: {price}"
 
-            keyboard = [[InlineKeyboardButton("Buy", callback_data=f"buy_{company_name}_{model_name}_{set_name}"),
-                         InlineKeyboardButton("Go Back", callback_data=f"show_model_{company_name}_{model_name}")]]
-            query.message.reply_text(set_info, reply_markup=InlineKeyboardMarkup(keyboard))
+            # Check if there's a previous message
+            if "chat_id" in previous_message:
+                # Update the existing message to avoid sending a new one
+                query.edit_message_caption(caption=set_info)
+                # You can also update the inline keyboard if needed
+                keyboard = [[InlineKeyboardButton("Buy", callback_data=f"buy_{company_name}_{model_name}_{set_name}"),
+                             InlineKeyboardButton("Go Back", callback_data=f"show_model_{company_name}_{model_name}")]]
+                query.edit_message_reply_markup(reply_markup=InlineKeyboardMarkup(keyboard))
+            else:
+                query.answer(text="Previous message not found")
     else:
         query.answer(text="Complete set not found")
+# This code keeps track of the previous message's details in the previous_message dictionary and updates the existing message when the "Go Back" button is pressed, avoiding the need to send a new message.
+
+
+
+
+
 
 def gpt(update: Update, context: CallbackContext):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "Ты ассистент компании Profusion Cars и будешь отвечать только на вопросы о компании"},
+            {"role": "system", "content": "You are an assistant for Profusion Cars, and you will only answer questions about the company."},
             {"role": "user", "content": update.message.text},
         ],
     )
