@@ -1,7 +1,8 @@
 import logging
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
-
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler,MessageHandler,Filters
+from test import questions,answer_question
+import bot2 as bot
 # Замените 'YOUR_BOT_TOKEN' на ваш токен
 TOKEN = "5907195764:AAENObL59xrfDu8HYgNDWkQf9dX0l43S0xw"
 
@@ -14,67 +15,85 @@ dispatcher = updater.dispatcher
 
 # Словарь компаний, где ключ - название компании, значение - список моделей
 companies = {
-    "Компания 1": {
-        "Модель 1.1": {
-            "Год выпуска": 2023,
-            "Характеристики": "Характеристики модели 1.1",
-            "Фото": "https://example.com/model1.jpg",
+   "Honda": {
+        "Honda eNS1": {
+            "Год выпуска": 2022,
+            "Характеристики": "Honda e:NS1",
+            "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
             "Комплектации": {
-                "Комплектация 1.1.1": {
-                    "description": "Описание 1.1.1",
-                    "price": "$56 700",
-                    "mileage": "650km",
+                "Базовая комплектация": {
+                    "description": "Базовая комплектация",
+                    "price": "$9,000,000 (при 100% оплате будет $8,200,000)",
+                    "mileage": "-",
                     "drive": "Полный",
-                    "power": "400kW",
-                    "capacity": "100kWh",
+                    "power": "134kW (182 л.с.)",
+                    "capacity": "53.6 кВт*ч",
+                    #added fields
+                    "max_speed": "150 км/ч",
+                    "torque": "310 н.м",
+                    "push_start": "✅", 
+                    # 
                 },
-                "Комплектация 1.1.2": {
-                    "description": "Описание 1.1.2",
-                    "price": "$60 000",
-                    "mileage": "800km",
-                    "drive": "Задний",
-                    "power": "350kW",
-                    "capacity": "90kWh",
+                "Полная комплектация": {
+                    "description": "Полная комплектация",
+                    "price": "$11,000,000 (при 100% оплате будет $10,200,000)",
+                    "mileage": "-",
+                    "drive": "Полный",
+                    "power": "150kW (204 л.с.)",
+                    "capacity": "68.8 кВт*ч",
+                    "max_speed": "150 км/ч",
+                    "torque": "310 н.м",
+                    "push_start": "✅", 
                 },
             },
         },
-        "Модель 1.2": {
+        "Honda eNP1": {
             "Год выпуска": 2022,
-            "Характеристики": "Характеристики модели 1.2",
-            "Фото": "https://example.com/model2.jpg",
+            "Характеристики": "Honda e:NP1",
+            "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
             "Комплектации": {
-                "Комплектация 1.2.1": {
-                    "description": "Описание 1.2.1",
-                    "price": "$45 000",
-                    "mileage": "500km",
+                "Базовая комплектация": {
+                    "description": "Базовая комплектация",
+                    "price": "$9,000,000",
+                    "mileage": "-",
                     "drive": "Полный",
-                    "power": "300kW",
-                    "capacity": "80kWh",
+                    "power": "134kW",
+                    "capacity": "53.6 кВт*ч",
+                    "max_speed": "150 км/ч",
+                    "torque": "310 н.м",
+                    "push_start": "✅", 
                 },
-                "Комплектация 1.2.2": {
-                    "description": "Описание 1.2.2",
-                    "price": "$50 000",
-                    "mileage": "600km",
-                    "drive": "Задний",
-                    "power": "250kW",
-                    "capacity": "70kWh",
+                "Полная комплектация": {
+                    "description": "Полная комплектация",
+                    "price": "$11,000,000 (при 100% оплате будет $10,200,000)",
+                    "mileage": "-",
+                    "drive": "Полный",
+                    "power": "150kW",
+                    "capacity": "68.8 кВт*ч",
+                    "max_speed": "150 км/ч",
+                    "torque": "310 н.м",
+                    "push_start": "✅",
                 },
             },
         },
     },
-    "Компания 2": {
-        "Модель 2.1": {
+    "Zeekr": {
+        "Zeekr 001": {
             "Год выпуска": 2023,
-            "Характеристики": "Характеристики модели 2.1",
-            "Фото": "https://example.com/model3.jpg",
+            "Характеристики": "Zeekr 001",
+            "Фото":     "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
             "Комплектации": {
-                "Комплектация 2.1.1": {
-                    "description": "Описание 2.1.1",
-                    "price": "$55 000",
-                    "mileage": "700km",
+                "WE": {
+                    "description": "Описание",
+                    "price": "$44000 - 45000",
+                    "mileage": "",
                     "drive": "Полный",
-                    "power": "380kW",
-                    "capacity": "95kWh",
+                    "power": "400kW",
+                    "capacity": "86,0 кВт*ч",
+                    "max_speed": "150 км/ч",
+                    "torque": "768 н.м",
+                    "push_start": "✅",
+                    
                 },
                 "Комплектация 2.1.2": {
                     "description": "Описание 2.1.2",
@@ -83,13 +102,16 @@ companies = {
                     "drive": "Задний",
                     "power": "320kW",
                     "capacity": "85kWh",
+                    "max_speed": "150 км/ч",
+                    "torque": "310 н.м",
+                    "push_start": "✅",
                 },
             },
         },
-        "Модель 2.2": {
+        "Zeekr X": {
             "Год выпуска": 2022,
             "Характеристики": "Характеристики модели 2.2",
-            "Фото": "https://example.com/model4.jpg",
+            "Фото":     "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
             "Комплектации": {
                 "Комплектация 2.2.1": {
                     "description": "Описание 2.2.1",
@@ -98,6 +120,9 @@ companies = {
                     "drive": "Полный",
                     "power": "350kW",
                     "capacity": "90kWh",
+                    "max_speed": "150 км/ч",
+                    "torque": "310 н.м",
+                    "push_start": "✅",
                 },
                 "Комплектация 2.2.2": {
                     "description": "Описание 2.2.2",
@@ -106,18 +131,44 @@ companies = {
                     "drive": "Задний",
                     "power": "300kW",
                     "capacity": "80kWh",
+                    "max_speed": "150 км/ч",
+                    "torque": "310 н.м",
+                    "push_start": "✅",
                 },
             },
         },
     },
 }
 
+introduction_sent = {}
+
 # Обработчик команды /start
 def start(update, context):
     user = update.effective_user
-    context.bot.send_message(chat_id=update.effective_chat.id,
-                             text=f"Привет, {user.mention_html()}! Добро пожаловать в бота по автомобилям. "
-                                  f"Нажмите /cars, чтобы начать.")
+    user_id = user.id
+    if user_id not in introduction_sent:
+        instructions = (
+            f"Привет, {user.mention_html()}!\n"
+            "Я чат бот компаний Profusion Cars. Я помогу вам найти ответы на вопросы касаемо машины, комплектаций, цены и т.д.\n"
+            "Вы можете задать вопрос в чат бот или через /questions посмотреть ответы на часто задаваемые вопросы \n\n"
+            "Доступные команды:\n"
+            "/questions - Показать это ответы на часто задаваемые вопросы\n"
+            "/cars - Показать список машин и комплектаций, характеристики\n"
+        )
+        update.message.reply_html(instructions)
+        introduction_sent[user_id] = True
+    # instructions = (
+    #         f"Привет, {user.mention_html()}!\n"
+    #         "Я чат бот компаний Profusion Cars. Я помогу вам найти ответы на вопросы касаемо машины, комплектаций, цены и т.д.\n"
+    #         "Вы можете задать вопрос в чат бот или через /questions посмотреть ответы на часто задаваемые вопросы \n\n"
+    #         "Доступные команды:\n"
+    #         "/questions - Показать это ответы на часто задаваемые вопросы\n"
+    #         "/cars - Показать список машин и комплектаций, характеристики\n"
+    #     )
+    # user = update.effective_user
+    # context.bot.send_message(chat_id=update.effective_chat.id,
+    #                          text=f"Привет, {user.mention_html()}! Добро пожаловать в бота по автомобилям. "
+    #                               f"Нажмите /cars, чтобы начать.")
 
 # Обработчик команды /cars
 def show_car_companies(update, context):
@@ -150,10 +201,10 @@ def button(update, context):
 
         keyboard.append([InlineKeyboardButton("Назад", callback_data=f'back_to_companies')])
         reply_markup = InlineKeyboardMarkup(keyboard)
-
+        text=f"Выбрана компания: {company_name}\nВыберите модель автомобиля:"
         query.edit_message_text(text=f"Выбрана компания: {company_name}\nВыберите модель автомобиля:", reply_markup=reply_markup)
+        
 
-# Обработчик для кнопок выбора модели
 def choose_model(update, context):
     query = update.callback_query
     query.answer()
@@ -182,7 +233,12 @@ def choose_model(update, context):
 
             message_text = f"Выбрана модель: {model_name}\nГод выпуска: {model_year}\nХарактеристики: {model_characteristics}"
 
+            # Отправляем фотографию и текст сообщения
+            # context.bot.send_photo(chat_id=update.effective_chat.id, photo=model_photo, caption=message_text,
+            #                        reply_markup=reply_markup)
             query.edit_message_text(text=message_text, reply_markup=reply_markup)
+# ...
+
 
 # Обработчик для кнопок выбора комплектации
 def choose_configuration(update, context):
@@ -207,29 +263,38 @@ def choose_configuration(update, context):
 
                     description = config_info.get("description")
                     price = config_info.get("price")
-                    mileage = config_info.get("mileage")
                     drive = config_info.get("drive")
                     power = config_info.get("power")
                     capacity = config_info.get("capacity")
-
+                    max_speed = config_info.get("max_speed")
+                    torque = config_info.get("torque")
+                    push_start = config_info.get("push_start")
                     message_text = (
                         f"Комплектация: {description}\n"
                         f"Цена: {price}\n"
-                        f"Пробег: {mileage}\n"
                         f"Привод: {drive}\n"
                         f"Мощность: {power}\n"
-                        f"Емкость батареи: {capacity}"
+                        f"Емкость батареи: {capacity}\n"
+                        f"Максимальная скорость: {max_speed}\n"
+                        f"Крутящий момент: {torque}\n"
+                        f"Кнопка запуска: {push_start}\n"
                     )
 
                     keyboard = [
                         [InlineKeyboardButton("Назад к моделям", callback_data=f'back_to_models')],
                         [InlineKeyboardButton("Назад к компаниям", callback_data=f'back_to_companies')],
                     ]
+
+                    if config_name != "Complete Car":  # Check if it's not the "Complete Car" option
+                        keyboard.append([InlineKeyboardButton("Complete Car", callback_data=f'config:Complete Car')])
+
                     reply_markup = InlineKeyboardMarkup(keyboard)
 
+                    # Update the existing message's caption with new information
+                    query.message.caption = message_text
+                    query.message.reply_markup = reply_markup
                     query.edit_message_text(text=message_text, reply_markup=reply_markup)
 
-# Обработчик для кнопки "Назад" от модели к списку моделей
 def back_to_models(update, context):
     query = update.callback_query
     query.answer()
@@ -246,7 +311,16 @@ def back_to_models(update, context):
         keyboard.append([InlineKeyboardButton("Назад к компаниям", callback_data=f'back_to_companies')])
         reply_markup = InlineKeyboardMarkup(keyboard)
 
-        query.edit_message_text(text=f"Выберите модель автомобиля:", reply_markup=reply_markup)
+        # Define the new text you want for the message
+        new_text = 'Выберите модель автомобиля:'
+
+        # Use the edit_message_text method to update the text and reply_markup
+        query.edit_message_text(
+            text=new_text,
+            reply_markup=reply_markup,
+            parse_mode='Markdown'  # You can specify the parsing mode if needed
+        )
+
 
 # Обработчик для кнопки "Назад" от компании к списку компаний
 def back_to_companies(update, context):
@@ -260,11 +334,14 @@ def back_to_companies(update, context):
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
+    # Clear the caption, photo, and set the updated reply markup for the message
     query.edit_message_text(text='Выберите компанию:', reply_markup=reply_markup)
 
 # Регистрация обработчиков
 start_handler = CommandHandler('start', start)
 cars_handler = CommandHandler('cars', show_car_companies)
+dispatcher.add_handler(CommandHandler('questions', questions))
+dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, answer_question))
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(cars_handler)
 dispatcher.add_handler(CallbackQueryHandler(button, pattern='^company:'))

@@ -1,7 +1,7 @@
 import logging
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
-
+import bot2 as bot 
 # Ваш токен бота
 TOKEN = "5907195764:AAENObL59xrfDu8HYgNDWkQf9dX0l43S0xw"
 
@@ -36,7 +36,8 @@ def answer_question(update: Update, context: CallbackContext) -> None:
         answer = questions_answers[selected_question]
         update.message.reply_text(answer)
     else:
-        update.message.reply_text("Извините, ответ на этот вопрос недоступен.")
+        answer = bot.bot_answer(selected_question)
+        update.message.reply_text(answer)
 def start(update: Update, context: CallbackContext) -> None:
     user = update.effective_user
     instructions = (
@@ -56,7 +57,7 @@ def main() -> None:
 
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("questions", questions))
-    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, answer_question))
+    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, bot2))
 
     updater.start_polling()
     updater.idle()

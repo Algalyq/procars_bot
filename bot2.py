@@ -54,7 +54,20 @@ chat_params = {
 vStore = Chroma.from_documents(doc_texts, openAI_embeddings)
 
 model = VectorDBQA.from_chain_type(llm=ChatOpenAI(**chat_params),chain_type="stuff",vectorstore=vStore)
+def bot_answer(text:str):
+       
+    # Define a system message to instruct the assistant
+    system_message = "Вы - помощник компаний Profusion Cars. Ваша роль заключается в том, чтобы помочь пользователю найти автомобиль своей мечты. Пожалуйста, не отвечайте на вопросы по-английски"
 
+    # Concatenate the user's message with the system message to simulate a conversation
+    conversation = f"{system_message}\nUser: {text}"
+
+    # Pass the conversation to the model and get a response
+    out = model.run(conversation)
+
+    # Extract the assistant's response from the conversation
+    assistant_response = out.split("User: ")[-1]
+    return assistant_response
 
 def gpt(update: Update, context: CallbackContext):
     user_message = update.message.text
