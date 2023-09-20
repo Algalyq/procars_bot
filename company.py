@@ -15,11 +15,10 @@ companies = {
                     "drive": "Полный",
                     "power": "134kW (182 л.с.)",
                     "capacity": "53.6 кВт*ч",
-                    #added fields
                     "max_speed": "150 км/ч",
                     "torque": "310 н.м",
                     "push_start": "✅", 
-                    # 
+                    
                 },
                 "Полная комплектация": {
                     "description": "Полная комплектация",

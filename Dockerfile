@@ -16,4 +16,4 @@ COPY . .
 RUN dir -s
 # Run your Telegram bot script when the container launches
 # ENTRYPOINT  ["ls"]
-CMD ["python3", "-u", "yes.py"]
+CMD ["python3", "-u", "main.py"]

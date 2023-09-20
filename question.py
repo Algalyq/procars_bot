@@ -3,6 +3,7 @@ from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 import bot as bot 
 import request as req
+from validator import validation
 # Ваш токен бота
 TOKEN = "5907195764:AAENObL59xrfDu8HYgNDWkQf9dX0l43S0xw"
 
@@ -38,16 +39,11 @@ def answer_question(update: Update, context: CallbackContext) -> None:
     if selected_question in questions_answers:
         answer = questions_answers[selected_question]
         update.message.reply_text(answer)
-    elif selected_question.startswith(("+7708", "+8708", "8708","+7705","+7747","+7701","8701","8747")) and len(selected_question) == 12 or len(selected_question) == 11:
+        
+    elif validation.validation_phone_number(selected_question) == True:
         req.send_data_to_api(user.first_name, selected_question)
-
         update.message.reply_text(f"{user.first_name}, {selected_question} ваши данные правильно заполнен? Если да, то нажмите Да, если нет, то нажмите Нет")    
-        # update.message.reply_text("Спасибо за ваш номер телефона! Мы свяжемся с вами в ближайшее время.")   
-        if selected_question == "да" or selected_question == "Да":
-            update.message.reply_text("Спасибо за ваш номер телефона! Мы свяжемся с вами в ближайшее время.")   
-        elif selected_question == "нет" or selected_question == "Нет":
-            update.message.reply_text("Пожалуйста, введите ваш номер телефона еще раз.")
-    elif selected_question.startswith(("+7708","+8708", "8708","+7705","+7747","+7701","8701","8747")) and len(selected_question) < 11:
+    elif validation.validation_phone_number(selected_question) == False:
         update.message.reply_text("Вы набрали неправильный номер телефона. Пожалуйста, попробуйте еще раз.")   
 
     else:
