@@ -1,7 +1,8 @@
 import logging
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
-import bot2 as bot 
+import bot as bot 
+import request as req
 # Ваш токен бота
 TOKEN = "5907195764:AAENObL59xrfDu8HYgNDWkQf9dX0l43S0xw"
 
@@ -32,21 +33,40 @@ def get_questions_keyboard():
 # Функция для обработки выбора вопроса
 def answer_question(update: Update, context: CallbackContext) -> None:
     selected_question = update.message.text
+
+    user = update.effective_user
     if selected_question in questions_answers:
         answer = questions_answers[selected_question]
         update.message.reply_text(answer)
+    elif selected_question.startswith(("+7708", "+8708", "8708","+7705","+7747","+7701","8701","8747")) and len(selected_question) == 12 or len(selected_question) == 11:
+        req.send_data_to_api(user.first_name, selected_question)
+
+        update.message.reply_text(f"{user.first_name}, {selected_question} ваши данные правильно заполнен? Если да, то нажмите Да, если нет, то нажмите Нет")    
+        # update.message.reply_text("Спасибо за ваш номер телефона! Мы свяжемся с вами в ближайшее время.")   
+        if selected_question == "да" or selected_question == "Да":
+            update.message.reply_text("Спасибо за ваш номер телефона! Мы свяжемся с вами в ближайшее время.")   
+        elif selected_question == "нет" or selected_question == "Нет":
+            update.message.reply_text("Пожалуйста, введите ваш номер телефона еще раз.")
+    elif selected_question.startswith(("+7708","+8708", "8708","+7705","+7747","+7701","8701","8747")) and len(selected_question) < 11:
+        update.message.reply_text("Вы набрали неправильный номер телефона. Пожалуйста, попробуйте еще раз.")   
+
     else:
         answer = bot.bot_answer(selected_question)
         update.message.reply_text(answer)
+
+
+    
 def start(update: Update, context: CallbackContext) -> None:
     user = update.effective_user
+    
     instructions = (
-        f"Привет, {user.mention_html()}!\n"
+        f"Привет, {user.mention_html()} , !\n"
         "Я чат бот компаний Profusion Cars.Я помогу вам найти ответы на вопросы касаемо машины,комплектаций,цены и т.д.\n"
         "Вы можете задать вопрос в чат бот или через /questions посмотреть ответы на часто задаваемый вопросы \n\n"
         "Доступные команды:\n"
         "/questions - Показать это ответы на часто задаваемые вопросы\n"
         "/cars - Показать список машин и комплектаций,характеристики\n"
+        "/call - Звонок от менеджера\n"
     )
     
     update.message.reply_html(instructions)
@@ -57,7 +77,7 @@ def main() -> None:
 
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("questions", questions))
-    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, bot2))
+    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, bot))
 
     updater.start_polling()
     updater.idle()

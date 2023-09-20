@@ -10,7 +10,6 @@ from langchain.vectorstores import Chroma
 from langchain.chat_models import ChatOpenAI
 from langchain.text_splitter import CharacterTextSplitter
 from langchain import OpenAI,VectorDBQA 
-import callbacks as call
 from dotenv import load_dotenv
 from langchain.document_loaders import DirectoryLoader
 
@@ -57,7 +56,7 @@ model = VectorDBQA.from_chain_type(llm=ChatOpenAI(**chat_params),chain_type="stu
 def bot_answer(text:str):
        
     # Define a system message to instruct the assistant
-    system_message = "Вы - помощник компаний Profusion Cars. Ваша роль заключается в том, чтобы помочь пользователю найти автомобиль своей мечты. Пожалуйста, не отвечайте на вопросы по-английски"
+    system_message = "Вы - помощник компаний Profusion Cars. Ваша роль заключается в том, чтобы помочь пользователю найти автомобиль своей мечты. Пожалуйста, не отвечайте на вопросы по-английски."
 
     # Concatenate the user's message with the system message to simulate a conversation
     conversation = f"{system_message}\nUser: {text}"
@@ -87,11 +86,6 @@ def gpt(update: Update, context: CallbackContext):
     print(assistant_response)
     update.message.reply_text(assistant_response)
 # Register the ChatGPT handl
-
-dispatcher.add_handler(CommandHandler('car', call.cars))
-dispatcher.add_handler(CallbackQueryHandler(call.show_company_models, pattern=r'show_company_'))
-dispatcher.add_handler(CallbackQueryHandler(call.show_model_description, pattern=r'show_model_'))
-dispatcher.add_handler(CallbackQueryHandler(call.show_complete_set_details, pattern=r'show_set_'))
 dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, gpt))
 
 if __name__ == "__main__":
