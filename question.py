@@ -2,6 +2,8 @@ import logging
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 import bot as bot 
+import logging
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 import request as req
 from validator import validation
 # Ваш токен бота
@@ -41,8 +43,21 @@ def answer_question(update: Update, context: CallbackContext) -> None:
         update.message.reply_text(answer)
         
     elif validation.validation_phone_number(selected_question) == True:
-        req.send_data_to_api(user.first_name, selected_question)
-        update.message.reply_text(f"{user.first_name}, {selected_question} ваши данные правильно заполнен? Если да, то нажмите Да, если нет, то нажмите Нет")    
+        # Store the phone number in user_data
+        context.user_data['phone_number'] = selected_question
+
+        # Create the custom keyboard with "Да" and "Нет" buttons
+        keyboard = [
+            [InlineKeyboardButton("Да", callback_data='yes')],
+            [InlineKeyboardButton("Нет", callback_data='no')]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        update.message.reply_text(
+            text=f"{user.username }, {selected_question} ваши данные правильно заполнены? Если да, то нажмите Да, если нет, то нажмите Нет",
+            reply_markup=reply_markup,
+            parse_mode='Markdown'
+        )
     elif validation.validation_phone_number(selected_question) == False:
         update.message.reply_text("Вы набрали неправильный номер телефона. Пожалуйста, попробуйте еще раз.")   
 
@@ -50,7 +65,21 @@ def answer_question(update: Update, context: CallbackContext) -> None:
         answer = bot.bot_answer(selected_question)
         update.message.reply_text(answer)
 
+def confirm(update: Update, context: CallbackContext) -> None:
+    query = update.callback_query
+    user = update.effective_user
+    user_data = context.user_data
 
+    if query.data == 'yes':
+        # If user clicked "Да," make a POST request here using user_data['phone_number']
+        phone_number = user_data.get('phone_number', '')
+        if phone_number:
+            req.send_data_to_api(user.first_name, phone_number)
+            update.callback_query.answer("Данные успешно отправлены!")
+
+    elif query.data == 'no':
+        # Handle "Нет" case if needed
+        pass
     
 def start(update: Update, context: CallbackContext) -> None:
     user = update.effective_user

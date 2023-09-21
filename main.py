@@ -1,7 +1,7 @@
 import logging
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler,MessageHandler,Filters
-from question import questions,answer_question
+from question import questions,answer_question,confirm
 import bot as bot
 import requests  
 from company import companies
@@ -66,7 +66,6 @@ dispatcher.add_handler(CallbackQueryHandler(callback_choose_model, pattern='^mod
 dispatcher.add_handler(CallbackQueryHandler(callback_configuration, pattern='^config:'))
 dispatcher.add_handler(CallbackQueryHandler(callback_models, pattern='^back_to_models'))
 dispatcher.add_handler(CallbackQueryHandler(callback_companies, pattern='^back_to_companies'))
-
-
+dispatcher.add_handler((CallbackQueryHandler(confirm)))
 updater.start_polling()
 updater.idle()
