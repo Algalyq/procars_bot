@@ -127,8 +127,7 @@ def callback_configuration(update, context):
                             f"Мощность: {power}\n"
                             f"Расход: {capacity}\n"
                             f"Максимальная скорость: {max_speed}\n"
-                            f"Крутящий момент: {torque}\n"
-                            
+                            f"Крутящий момент: {torque}\n"                            
                             f"Обьем: {Обьем}\n"
                             f"Комплектация: {description}\n"
                           )
