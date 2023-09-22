@@ -72,9 +72,6 @@ def callback_call(update, context):
     user_id = user.id
     query.edit_message_text(text=f"{user.first_name}, напишите ваш номер телефон. Например: +77081234567")
 
-
-
-
 def callback_configuration(update, context):
     query = update.callback_query
     query.answer()
@@ -94,7 +91,7 @@ def callback_configuration(update, context):
                 configurations = model_info["Комплектации"]
                 if config_name in configurations:
                     config_info = configurations[config_name]
-
+             
                     description = config_info.get("description")
                     price = config_info.get("price")
                     drive = config_info.get("drive")
@@ -103,33 +100,38 @@ def callback_configuration(update, context):
                     max_speed = config_info.get("max_speed")
                     torque = config_info.get("torque")
                     push_start = config_info.get("push_start")
-
-                    if config_name == "Звонок от менеджера":
-                        # Prompt the user for information
-                        query.edit_message_text("Напишите ваше имя, номер телефона и вашу желаемую машину на одной строке:")
-                        user_data_dict[update.effective_user.id] = {
-                            "config_name": config_name,
-                            "description": description,
-                            "price": price,
-                            "drive": drive,
-                            "power": power,
-                            "capacity": capacity,
-                            "max_speed": max_speed,
-                            "torque": torque,
-                            "push_start": push_start,
-                        }
-                        return
-
-                    message_text = (
-                        f"Комплектация: {description}\n"
-                        f"Цена: {price}\n"
-                        f"Привод: {drive}\n"
-                        f"Мощность: {power}\n"
-                        f"Емкость батареи: {capacity}\n"
-                        f"Максимальная скорость: {max_speed}\n"
-                        f"Крутящий момент: {torque}\n"
-                        f"Кнопка запуска: {push_start}\n"
-                    )
+                    Обьем = config_info.get("Обьем")
+                    # Determine car type (electric or oil) based on some criteria in your data
+                    car_type = model_info['Тип двигателя']  # Replace with your logic to determine car type
+                    mileage = config_info.get("mileage")
+                    if car_type == "Электрический":
+                        # Customize information for electric cars
+                        electric_info = config_info.get("electric_info")
+                        message_text = (
+                            f"Комплектация: {description}\n"
+                            f"Цена: {price}\n"
+                            f"Привод: {drive}\n"
+                            f"Мощность: {power}\n"
+                            f"Емкость батареи: {capacity}\n"
+                            f"Максимальная скорость: {max_speed}\n"
+                            f"Запас хода: {mileage}\n"
+                            f"Крутящий момент: {torque}\n"
+                            f"Дополнительная информация для электрических машин: {electric_info}\n"
+                        )
+                    else:
+                        # Customize information for oil cars (internal combustion engine)
+                        oil_info = config_info.get("oil_info")
+                        message_text = (
+                            f"Цена: {price}\n"
+                            f"Привод: {drive}\n"
+                            f"Мощность: {power}\n"
+                            f"Расход: {capacity}\n"
+                            f"Максимальная скорость: {max_speed}\n"
+                            f"Крутящий момент: {torque}\n"
+                            
+                            f"Обьем: {Обьем}\n"
+                            f"Комплектация: {description}\n"
+                          )
 
                     keyboard = [
                         [InlineKeyboardButton("Звонок от менеджера", callback_data=f'call')],
@@ -143,7 +145,6 @@ def callback_configuration(update, context):
                     query.message.caption = message_text
                     query.message.reply_markup = reply_markup
                     query.edit_message_text(text=message_text, reply_markup=reply_markup)
-
 
 
 def callback_models(update, context):

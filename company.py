@@ -1,12 +1,11 @@
-
-
-# Словарь компаний, где ключ - название компании, значение - список моделей
+# Updated dictionary with car type (electric or oil)
 companies = {
-   "Honda": {
+    "Honda": {
         "Honda eNS1": {
             "Год выпуска": 2022,
             "Характеристики": "Honda e:NS1",
             "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
+            "Тип двигателя": "Электрический",  # Add car type information
             "Комплектации": {
                 "Базовая комплектация": {
                     "description": "Базовая комплектация",
@@ -17,8 +16,7 @@ companies = {
                     "capacity": "53.6 кВт*ч",
                     "max_speed": "150 км/ч",
                     "torque": "310 н.м",
-                    "push_start": "✅", 
-                    
+                    "push_start": "✅",
                 },
                 "Полная комплектация": {
                     "description": "Полная комплектация",
@@ -29,7 +27,7 @@ companies = {
                     "capacity": "68.8 кВт*ч",
                     "max_speed": "150 км/ч",
                     "torque": "310 н.м",
-                    "push_start": "✅", 
+                    "push_start": "✅",
                 },
             },
         },
@@ -37,6 +35,7 @@ companies = {
             "Год выпуска": 2022,
             "Характеристики": "Honda e:NP1",
             "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
+            "Тип двигателя": "Электрический",  # Add car type information
             "Комплектации": {
                 "Базовая комплектация": {
                     "description": "Базовая комплектация",
@@ -47,7 +46,7 @@ companies = {
                     "capacity": "53.6 кВт*ч",
                     "max_speed": "150 км/ч",
                     "torque": "310 н.м",
-                    "push_start": "✅", 
+                    "push_start": "✅",
                 },
                 "Полная комплектация": {
                     "description": "Полная комплектация",
@@ -67,11 +66,12 @@ companies = {
         "Zeekr 001": {
             "Год выпуска": 2023,
             "Характеристики": "Zeekr 001",
-            "Фото":     "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
+            "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
+            "Тип двигателя": "Электрический",  # Add car type information
             "Комплектации": {
                 "WE": {
                     "description": "Описание",
-                    "price": "$44000 - 45000",
+                    "price": "$44000 - $45000",
                     "mileage": "",
                     "drive": "Полный",
                     "power": "400kW",
@@ -79,47 +79,112 @@ companies = {
                     "max_speed": "150 км/ч",
                     "torque": "768 н.м",
                     "push_start": "✅",
-                    
                 },
-                "Комплектация 2.1.2": {
+                "YOU": {
                     "description": "Описание 2.1.2",
-                    "price": "$58 000",
-                    "mileage": "750km",
+                    "price": "$58,000",
+                    "mileage": "",
+                    "drive": "Полный",
+                    "power": "400kW",
+                    "capacity": "100 кВт*ч",
+                    "max_speed": "200 км/ч",
+                    "torque": "768 н.м",
+                    "push_start": "✅",
+                },
+                "ME": {
+                    "description": "Описание 2.1.2",
+                    "price": "$58,000",
+                    "mileage": "",
                     "drive": "Задний",
-                    "power": "320kW",
-                    "capacity": "85kWh",
-                    "max_speed": "150 км/ч",
-                    "torque": "310 н.м",
+                    "power": "265kW",
+                    "capacity": "86 кВт*ч",
+                    "max_speed": "200 км/ч",
+                    "torque": "586 н.м",
                     "push_start": "✅",
                 },
             },
         },
         "Zeekr X": {
-            "Год выпуска": 2022,
+            "Год выпуска": 2023,
             "Характеристики": "Характеристики модели 2.2",
-            "Фото":     "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
+            "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
+            "Тип двигателя": "Электрический",  # Add car type information
             "Комплектации": {
-                "Комплектация 2.2.1": {
+                "YOU 4-местный": {
                     "description": "Описание 2.2.1",
-                    "price": "$48 000",
-                    "mileage": "550km",
-                    "drive": "Полный",
-                    "power": "350kW",
-                    "capacity": "90kWh",
-                    "max_speed": "150 км/ч",
+                    "price": "$48,000",
+                    "mileage": "-",
+                    "drive": "Задний",
+                    "power": "200kW",
+                    "capacity": "66 кВт*ч",
+                    "max_speed": "185 км/ч",
                     "torque": "310 н.м",
                     "push_start": "✅",
                 },
-                "Комплектация 2.2.2": {
+                "YOU 5-местный": {
                     "description": "Описание 2.2.2",
-                    "price": "$52 000",
-                    "mileage": "600km",
+                    "price": "$52,000",
+                    "mileage": "-",
                     "drive": "Задний",
-                    "power": "300kW",
-                    "capacity": "80kWh",
-                    "max_speed": "150 км/ч",
-                    "torque": "310 н.м",
+                    "power": "315kW",
+                    "capacity": "66 кВт*ч",
+                    "max_speed": "185 км/ч",
+                    "torque": "543 н.м",
                     "push_start": "✅",
+                },
+            },
+        },
+    },
+    "Toyota": {
+        "Toyota bz4x": {
+            "Год выпуска": 2023,
+            "Характеристики": "Toyota bz4x",
+            "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
+            "Тип двигателя": "Электрический",  # Add car type information
+            "Комплектации": {
+                "JOY": {
+                    "description": "Описание",
+                    "price": "$44000 - $45000",
+                    "mileage": "",
+                    "drive": "Передний",
+                    "power": "150kW",
+                    "capacity": "50,3 кВт*ч",
+                    "max_speed": "160 км/ч",
+                    "torque": "266 н.м",
+                    "push_start": "✅",
+                },
+                "X-mode Pro": {
+                    "description": "Описание 2.1.2",
+                    "price": "$58,000",
+                    "mileage": "",
+                    "drive": "Полный",
+                    "power": "150kW",
+                    "capacity": "66,7 кВт*ч",
+                    "max_speed": "160 км/ч",
+                    "torque": "337 н.м",
+                    "push_start": "✅",
+                },
+            },
+        },
+    },
+    "Geely": {
+        "Geely Manjaro": {
+            "Год выпуска": 2023,
+            "Характеристики": "Geely manjaro",
+            "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
+            "Тип двигателя": "ДВС",  # Add car type information
+            "Комплектации": {
+                "Полный комплектация": {
+                    "description": "Описание",
+                    "price": "$44000 - $45000", #price
+                    "mileage": "",  # запас хода
+                    "drive": "Полный", # привод
+                    "power": "150kW", # мощность лс и кВт
+                    "capacity": "238 л.с", # емкость батареи кВт*ч или л/100км
+                    "max_speed": "215 км/ч",
+                    "torque": "350 н.м", # крутящий момент
+                    "Обьем": "2.0 л", # обьем двигателя 
+                    "push_start": "✅", 
                 },
             },
         },
