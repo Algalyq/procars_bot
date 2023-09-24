@@ -6,4 +6,6 @@ services:
       - ./:/app
     env_file:
       - .env
+    ports:
+      - "80:80"  # Bind container port 80 to host port 80
     restart: always
