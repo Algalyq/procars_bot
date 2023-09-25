@@ -12,20 +12,12 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain import OpenAI,VectorDBQA 
 from dotenv import load_dotenv
 from langchain.document_loaders import DirectoryLoader
-
 import nltk
 import getpass
 # # Load environment variables from .env file
 load_dotenv()
 
 os.environ['OPENAI_API_KEY'] = os.getenv("ai_token")
-# # Define your Telegram bot token
-TOKEN = os.getenv("tg_token")
-
-# # # Create an Updater object
-updater = Updater(token=TOKEN, use_context=True)
-dispatcher = updater.dispatcher
-
 # Initialize OpenAI
 openai.api_key = os.getenv("ai_token")
 
@@ -40,7 +32,6 @@ docs = loader.load()
 
 char_text_split = CharacterTextSplitter(chunk_size=10000,chunk_overlap=0)
 doc_texts = char_text_split.split_documents(docs)
-
 
 openAI_embeddings = OpenAIEmbeddings(openai_api_key=os.environ['OPENAI_API_KEY'])
 
@@ -67,31 +58,6 @@ def bot_answer(text:str):
     # Extract the assistant's response from the conversation
     assistant_response = out.split("User: ")[-1]
     return assistant_response
-
-def gpt(update: Update, context: CallbackContext):
-    user_message = update.message.text
-
-    # Define a system message to instruct the assistant
-    system_message = "Вы - помощник компаний Profusion Cars. Ваша роль заключается в том, чтобы помочь пользователю найти автомобиль своей мечты. Пожалуйста, не отвечайте на вопросы по-английски"
-
-    # Concatenate the user's message with the system message to simulate a conversation
-    conversation = f"{system_message}\nUser: {user_message}"
-
-    # Pass the conversation to the model and get a response
-    out = model.run(conversation)
-
-    # Extract the assistant's response from the conversation
-    assistant_response = out.split("User: ")[-1]
-
-    print(assistant_response)
-    update.message.reply_text(assistant_response)
-# Register the ChatGPT handl
-dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, gpt))
-
-if __name__ == "__main__":
-    updater.start_polling()
-    updater.idle()
-
 
 
 

@@ -3,12 +3,13 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler,MessageHandler,Filters
 from question import questions,answer_question,confirm
 import bot as bot
+from apscheduler.schedulers.background import BackgroundScheduler
 import requests  
 from company import companies
 from callbacks.callback import callback_button,callback_choose_model,callback_configuration,callback_call,callback_models,callback_companies
 
 
-TOKEN = "5907195764:AAENObL59xrfDu8HYgNDWkQf9dX0l43S0xw"
+TOKEN = "5907195764:AAHjtXorzjiG6VZs8sj4c5ShUt1c3T3tBUU"
 
 # Установка уровня логирования
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -67,5 +68,12 @@ dispatcher.add_handler(CallbackQueryHandler(callback_configuration, pattern='^co
 dispatcher.add_handler(CallbackQueryHandler(callback_models, pattern='^back_to_models'))
 dispatcher.add_handler(CallbackQueryHandler(callback_companies, pattern='^back_to_companies'))
 dispatcher.add_handler((CallbackQueryHandler(confirm)))
-updater.start_polling()
-updater.idle()
+
+
+try:
+    scheduler = BackgroundScheduler()
+    scheduler.start() 
+    updater.start_polling()
+    updater.idle()  
+except Exception as e:
+    logging.error(e)
