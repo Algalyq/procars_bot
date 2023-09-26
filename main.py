@@ -11,6 +11,18 @@ from callbacks.callback import callback_button,callback_choose_model,callback_co
 import os 
 
 
+
+from flask import Flask
+
+# Create a Flask app
+app = Flask(__name__)
+
+# Define a route for the root URL '/'
+@app.route('/')
+def index():
+    return "Hello, World!"
+
+
 # Initialize OpenAI
 TOKEN =  os.getenv("TOKEN")
 
@@ -81,3 +93,9 @@ try:
     updater.idle()  
 except Exception as e:
     logging.error(e)
+
+
+
+if __name__ == '__main__':
+    # Run the Flask app on port 5000
+    app.run(host='0.0.0.0', port=5000)
