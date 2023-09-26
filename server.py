@@ -1,21 +1,17 @@
-from flask import Flask, request
-import telebot
+from flask import Flask
+import os
 
+# Create a Flask app
 app = Flask(__name__)
 
-# Initialize your Telegram bot using the bot token
-bot = telebot.TeleBot(TOKEN)
-
-# Define your route to handle incoming updates from Telegram
-@app.route(f'/{TOKEN}', methods=['POST'])
-def webhook():
-    update_json = request.get_json()
-    update = telebot.types.Update.de_json(update_json)
-    
-    # Handle the update using your existing code
-    dispatcher.process_new_updates([update])
-    
-    return '', 200
+# Define a route for the root URL '/'
+@app.route('/')
+def index():
+    return "Hello, World!"
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Get the port number from the PORT environment variable, or use 5000 as a default
+    port = int(os.environ.get('PORT', 5000))
+
+    # Run the Flask app on the provided port
+    app.run(host='0.0.0.0', port=port)
