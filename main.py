@@ -5,11 +5,15 @@ from question import questions,answer_question,confirm
 import bot as bot
 from apscheduler.schedulers.background import BackgroundScheduler
 import requests  
+from dotenv import load_dotenv
 from company import companies
 from callbacks.callback import callback_button,callback_choose_model,callback_configuration,callback_call,callback_models,callback_companies
+import os 
 
 
-TOKEN = "5907195764:AAHjtXorzjiG6VZs8sj4c5ShUt1c3T3tBUU"
+# Initialize OpenAI
+TOKEN =  os.getenv("TOKEN")
+
 
 # Установка уровня логирования
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)

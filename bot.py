@@ -10,7 +10,6 @@ from langchain.vectorstores import Chroma
 from langchain.chat_models import ChatOpenAI
 from langchain.text_splitter import CharacterTextSplitter
 from langchain import OpenAI,VectorDBQA 
-from dotenv import load_dotenv
 from langchain.document_loaders import DirectoryLoader
 import nltk
 import getpass
