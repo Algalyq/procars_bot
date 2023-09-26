@@ -59,15 +59,9 @@ async def callback_button(callback_query: types.CallbackQuery):
 
 # Your other callback handlers can go here
 
-async def on_startup(dp):
-    await bot.send_message(chat_id=991925952, text="Bot has been started")
-
-async def on_shutdown(dp):
-    await bot.send_message(chat_id=991925952, text="Bot has been stopped")
-
 if __name__ == '__main__':
     from aiogram import executor
     from aiogram import types
 
     # Start the bot using the polling method
-    executor.start_polling(dp, on_startup=on_startup, on_shutdown=on_shutdown, skip_updates=True)
+    executor.start_polling(dp, skip_updates=True)

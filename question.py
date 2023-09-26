@@ -6,8 +6,6 @@ import logging
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 import request as req
 from validator import validation
-# Ваш токен бота
-TOKEN = "5907195764:AAENObL59xrfDu8HYgNDWkQf9dX0l43S0xw"
 
 # Список вопросов и ответов
 questions_answers = {
@@ -96,16 +94,3 @@ def start(update: Update, context: CallbackContext) -> None:
     
     update.message.reply_html(instructions)
 # Основная функция
-def main() -> None:
-    updater = Updater(TOKEN, use_context=True)
-    dp = updater.dispatcher
-
-    dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("questions", questions))
-    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, bot))
-
-    updater.start_polling()
-    updater.idle()
-
-if __name__ == '__main__':
-    main()
