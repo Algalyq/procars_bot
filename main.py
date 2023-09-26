@@ -12,20 +12,15 @@ import os
 
 
 
-from flask import Flask
-
+from flask import Flask, request
 # Create a Flask app
-app = Flask(__name__)
-
-# Define a route for the root URL '/'
-@app.route('/')
-def index():
-    return "Hello, World!"
 
 
 # Initialize OpenAI
 TOKEN =  os.getenv("TOKEN")
 
+
+app = Flask(__name__)
 
 # Установка уровня логирования
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -96,6 +91,8 @@ except Exception as e:
 
 
 
+
 if __name__ == '__main__':
-    # Run the Flask app on port 5000
-    app.run(host='0.0.0.0', port=5000)
+    # Run the Flask app on a chosen port
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
