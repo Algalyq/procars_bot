@@ -93,4 +93,3 @@ def start(update: Update, context: CallbackContext) -> None:
     )
     
     update.message.reply_html(instructions)
-# Основная функция

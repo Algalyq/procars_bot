@@ -2,6 +2,8 @@ import os
 import logging
 from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler,MessageHandler,Filters
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from flask import Flask
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
 from company import companies
@@ -9,10 +11,16 @@ from callbacks.callback import callback_button,callback_choose_model,callback_co
 from question import questions,answer_question,confirm
 import bot as bot
 from dotenv import load_dotenv
-# Initialize OpenAI
-# TOKEN = os.getenv("TOKEN")
+from datetime import date
+import telebot 
+from googleid import fetch_data
+import gspread
 
-TOKEN = "5907195764:AAF2QWHDtKSV30dJqKJsXKIlbQAr_hMGK9I"
+# Initialize OpenAI
+TOKEN = os.getenv("TOKEN")
+
+bot = telebot.TeleBot(TOKEN)
+# TOKEN = "5907195764:AAF2QWHDtKSV30dJqKJsXKIlbQAr_hMGK9I"
 # Create a Flask app
 app = Flask(__name__)
 
@@ -51,8 +59,22 @@ def start(update, context):
 
 def show_car_companies(update, context):
     keyboard = []
+    data = fetch_data()
 
-    for company in companies.keys():
+    # Extract unique company names
+    unique_companies = set()
+
+    for row in data[1:]:  # Skip the header row
+        company = row[0]
+        if company:
+            unique_companies.add(company)
+
+    # Create an inline keyboard with buttons for each company
+    # keyboard = telebot.types.InlineKeyboardMarkup(row_width=1)
+    print(unique_companies)
+
+
+    for company in unique_companies:
         keyboard.append([InlineKeyboardButton(company, callback_data=f'company:{company}')])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
