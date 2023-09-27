@@ -5,6 +5,10 @@ from aiogram.utils import executor
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from dotenv import load_dotenv
 from company import companies
+import asyncio
+
+from aiogram import executor
+from aiogram import types
 import os
 from dotenv import load_dotenv
 # Initialize OpenAI
@@ -59,9 +63,11 @@ async def callback_button(callback_query: types.CallbackQuery):
 
 # Your other callback handlers can go here
 
-if __name__ == '__main__':
-    from aiogram import executor
-    from aiogram import types
 
-    # Start the bot using the polling method
-    executor.start_polling(dp, skip_updates=True)
+def main():
+    executor.start_polling(dispatcher=dp)
+
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.create_task(main())
+    executor.start_polling(dp)
