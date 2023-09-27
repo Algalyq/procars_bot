@@ -1,75 +1,58 @@
-
-from flask import Flask, request
-import telegram
-import os 
+import os
+import logging
+from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv
+from flask import Flask
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
 
-global bot
+from dotenv import load_dotenv
+# Initialize OpenAI
+# TOKEN = os.getenv("TOKEN")
 
-load_dotenv()
-
-TOKEN = os.getenv("TOKEN")
-bot = telegram.Bot(token=TOKEN)
-bot_user_name = "procars_bot"
-URL = "https://procars-b6ad7b3889e8.herokuapp.com/"
-
+TOKEN = "5907195764:AAF2QWHDtKSV30dJqKJsXKIlbQAr_hMGK9I"
+# Create a Flask app
 app = Flask(__name__)
 
+# Set up logging for Flask
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-@app.route('/{}'.format(TOKEN), methods=['POST'])
-def respond():
-   # retrieve the message in JSON and then transform it to Telegram object
-   update = telegram.Update.de_json(request.get_json(force=True), bot)
+# Set up the Telegram bot
+updater = Updater(token=TOKEN, use_context=True)
+dispatcher = updater.dispatcher
 
-   chat_id = update.message.chat.id
-   msg_id = update.message.message_id
+# Set up the BackgroundScheduler
+scheduler = BackgroundScheduler()
+scheduler.start()
 
-   # Telegram understands UTF-8, so encode text for unicode compatibility
-   text = update.message.text.encode('utf-8').decode()
-   # for debugging purposes only
-   print("got text message :", text)
-   # the first time you chat with the bot AKA the welcoming message
-   if text == "/start":
-       # print the welcoming message
-       bot_welcome = """
-       Welcome to coolAvatar bot, the bot is using the service from http://avatars.adorable.io/ to generate cool looking avatars based on the name you enter so please enter a name and the bot will reply with an avatar for your name.
-       """
-       # send the welcoming message
-       bot.sendMessage(chat_id=chat_id, text=bot_welcome, reply_to_message_id=msg_id)
+# Your Telegram bot handlers go here
+def start(update, context):
+    update.message.reply_text("Hello! This is your Telegram bot.")
 
+def echo(update, context):
+    text = update.message.text
+    update.message.reply_text(f"You said: {text}")
 
-   else:
-       try:
-           # clear the message we got from any non alphabets
-           text = re.sub(r"\W", "_", text)
-           # create the api link for the avatar based on http://avatars.adorable.io/
-           url = "https://api.adorable.io/avatars/285/{}.png".format(text.strip())
-           # reply with a photo to the name the user sent,
-           # note that you can send photos by url and telegram will fetch it for you
-           bot.sendPhoto(chat_id=chat_id, photo=url, reply_to_message_id=msg_id)
-       except Exception:
-           # if things went wrong
-           bot.sendMessage(chat_id=chat_id, text="There was a problem in the name you used, please enter different name", reply_to_message_id=msg_id)
+dispatcher.add_handler(CommandHandler('start', start))
+dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
 
-   return 'ok'
-
-
-@app.route('/setwebhook', methods=['GET', 'POST'])
-def set_webhook():
-    # we use the bot object to link the bot to our app which live
-    # in the link provided by URL
-    s = bot.setWebhook('{URL}{HOOK}'.format(URL=URL, HOOK=TOKEN))
-    # something to let us know things work
-    if s:
-        return "webhook setup ok"
-    else:
-        return "webhook setup failed"
-
-
+# Your Flask routes go here
 @app.route('/')
 def index():
-    return '.'
+    return "Hello, World!"
+
 if __name__ == '__main__':
-    # note the threaded arg which allow
-    # your app to have more than one thread
-    app.run(threaded=True)
+    # Run the Flask app and the Telegram bot updater using gunicorn
+    port = int(os.environ.get('PORT', 5000))
+
+    # Start the Flask app and Telegram bot updater as separate processes
+    import multiprocessing
+    processes = [
+        multiprocessing.Process(target=app.run, kwargs={'host': '0.0.0.0', 'port': port}),
+        multiprocessing.Process(target=updater.start_polling),
+    ]
+
+    for process in processes:
+        process.start()
+
+    for process in processes:
+        process.join()
