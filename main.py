@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from company import companies
 from callbacks.callback import callback_button,callback_choose_model,callback_configuration,callback_call,callback_models,callback_companies
 import os 
-
+from aiogram import types, executor
 
 
 from flask import Flask, request
@@ -61,6 +61,17 @@ def show_car_companies(update, context):
     update.message.reply_text('Выберите компанию:', reply_markup=reply_markup)
 
 
+
+async def set_default_commands(dp):
+    await dp.bot.set_my_commands(
+        [
+            types.BotCommand("start", "Старт"),
+            types.BotCommand("cars", "Просмотр машин"),
+            types.BotCommand("call", "Звонок от менеджера"),
+            types.BotCommand("questions", "Часто задаваемые вопросы"),
+        ]
+    )
+
 def call_command(update, context):
     query = update.callback_query
     user = update.effective_user
@@ -81,13 +92,13 @@ dispatcher.add_handler(CallbackQueryHandler(callback_companies, pattern='^back_t
 dispatcher.add_handler((CallbackQueryHandler(confirm)))
 
 
-try:
-    scheduler = BackgroundScheduler()
-    scheduler.start() 
-    updater.start_polling()
-    updater.idle()  
-except Exception as e:
-    logging.error(e)
+
+
+async def on_startup(dispatcher):
+    # Birlamchi komandalar (/star va /help)
+    await set_default_commands(dispatcher)
+
+
 
 
 
@@ -95,4 +106,9 @@ except Exception as e:
 if __name__ == '__main__':
     # Run the Flask app on a chosen port
     port = int(os.environ.get('PORT', 5000))
+
+    scheduler = BackgroundScheduler()
+    scheduler.start() 
+    updater.start_polling(dispatcher,on_startup=on_startup)
+    updater.idle()  
     app.run(host='0.0.0.0', port=port)
