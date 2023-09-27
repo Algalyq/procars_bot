@@ -1,33 +1,39 @@
+import os
 import logging
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler,MessageHandler,Filters
-from question import questions,answer_question,confirm
-import bot as bot
 from apscheduler.schedulers.background import BackgroundScheduler
-import requests  
 from dotenv import load_dotenv
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler,MessageHandler,Filters
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from flask import Flask
 from company import companies
 from callbacks.callback import callback_button,callback_choose_model,callback_configuration,callback_call,callback_models,callback_companies
-import os 
-from aiogram import types, executor
-
-
-from flask import Flask, request
-# Create a Flask app
-
+from question import questions,call_manager,receive_username,receive_phone_number,verify_data,USERNAME,PHONE_NUMBER,VERIFY_DATA,handle_text_message
+from gpt.bot import bot_answer
+from datetime import date
+import telebot 
+from google.googleid import fetch_data
+import gspread
+from telegram.ext import ConversationHandler
 
 # Initialize OpenAI
-TOKEN =  os.getenv("TOKEN")
+TOKEN = os.getenv("TOKEN")
 
-
+bot = telebot.TeleBot(TOKEN)
+# TOKEN = "5907195764:AAF2QWHDtKSV30dJqKJsXKIlbQAr_hMGK9I"
+# Create a Flask app
 app = Flask(__name__)
 
-# Установка уровня логирования
+# Set up logging for Flask
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-# Создание обновления и диспетчера
+# Set up the Telegram bot
 updater = Updater(token=TOKEN, use_context=True)
 dispatcher = updater.dispatcher
+
+# Set up the BackgroundScheduler
+scheduler = BackgroundScheduler()
+scheduler.start()
+
 
 user_data_dict = {}
 
@@ -52,25 +58,24 @@ def start(update, context):
 
 def show_car_companies(update, context):
     keyboard = []
+    data = fetch_data()
 
-    for company in companies.keys():
+    # Extract unique company names
+    unique_companies = set()
+
+    for row in data[1:]:  # Skip the header row
+        company = row[0]
+        if company:
+            unique_companies.add(company)
+
+
+    for company in unique_companies:
         keyboard.append([InlineKeyboardButton(company, callback_data=f'company:{company}')])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     update.message.reply_text('Выберите компанию:', reply_markup=reply_markup)
 
-
-
-async def set_default_commands(dp):
-    await dp.bot.set_my_commands(
-        [
-            types.BotCommand("start", "Старт"),
-            types.BotCommand("cars", "Просмотр машин"),
-            types.BotCommand("call", "Звонок от менеджера"),
-            types.BotCommand("questions", "Часто задаваемые вопросы"),
-        ]
-    )
 
 def call_command(update, context):
     query = update.callback_query
@@ -81,34 +86,46 @@ def call_command(update, context):
 dispatcher.add_handler(CommandHandler('start', start))
 dispatcher.add_handler(CommandHandler('cars', show_car_companies))
 dispatcher.add_handler(CommandHandler('questions', questions))
-dispatcher.add_handler(CommandHandler('call', call_command))
-dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, answer_question))
+dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_text_message))
 dispatcher.add_handler(CallbackQueryHandler(callback_call,pattern='^call'))
 dispatcher.add_handler(CallbackQueryHandler(callback_button, pattern='^company:'))
 dispatcher.add_handler(CallbackQueryHandler(callback_choose_model, pattern='^model:'))
 dispatcher.add_handler(CallbackQueryHandler(callback_configuration, pattern='^config:'))
 dispatcher.add_handler(CallbackQueryHandler(callback_models, pattern='^back_to_models'))
 dispatcher.add_handler(CallbackQueryHandler(callback_companies, pattern='^back_to_companies'))
-dispatcher.add_handler((CallbackQueryHandler(confirm)))
+
+conversation_handler = ConversationHandler(
+        entry_points=[CommandHandler('call', call_manager)],
+        states={
+            USERNAME: [MessageHandler(Filters.text & ~Filters.command, receive_username)],
+            PHONE_NUMBER: [MessageHandler(Filters.text & ~Filters.command, receive_phone_number)],
+            VERIFY_DATA: [CallbackQueryHandler(verify_data)],
+        },
+        fallbacks=[],
+    )
+
+dispatcher.add_handler(conversation_handler)
 
 
 
-
-async def on_startup(dispatcher):
-    # Birlamchi komandalar (/star va /help)
-    await set_default_commands(dispatcher)
-
-
-
-
-
+# Your Flask routes go here
+@app.route('/')
+def index():
+    return "Hello, World!"
 
 if __name__ == '__main__':
-    # Run the Flask app on a chosen port
+    # Run the Flask app and the Telegram bot updater using gunicorn
     port = int(os.environ.get('PORT', 5000))
 
-    scheduler = BackgroundScheduler()
-    scheduler.start() 
-    updater.start_polling(dispatcher,on_startup=on_startup)
-    updater.idle()  
-    app.run(host='0.0.0.0', port=port)
+    # Start the Flask app and Telegram bot updater as separate processes
+    import multiprocessing
+    processes = [
+        multiprocessing.Process(target=app.run, kwargs={'host': '0.0.0.0', 'port': port}),
+        multiprocessing.Process(target=updater.start_polling),
+    ]
+
+    for process in processes:
+        process.start()
+
+    for process in processes:
+        process.join()

@@ -1,9 +1,9 @@
 import logging
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler,MessageHandler,Filters
-from question import questions,answer_question
+from question import questions
 from company import companies
-from googleid import fetch_data
+from google.googleid import fetch_data
 
 
 # Обработчик для кнопок выбора компании
@@ -45,23 +45,17 @@ def callback_choose_model(update, context):
         if model_name in models_for_company:
             context.user_data["selected_model"] = model_name
             model_info = models_for_company[model_name]
-            model_year = model_info["Год выпуска"]
-            model_characteristics = model_info["Характеристики"]
 
             keyboard = []
 
-            # Добавляем кнопки выбора комплектации для выбранной модели
             for config_name in model_info.get("Комплектации", {}):
                 keyboard.append([InlineKeyboardButton(config_name, callback_data=f'config:{config_name}')])
 
             keyboard.append([InlineKeyboardButton("Назад к моделям", callback_data=f'back_to_models')])
             reply_markup = InlineKeyboardMarkup(keyboard)
             
-            message_text = f"Выбрана модель: {model_name}\nГод выпуска: {model_year}\nХарактеристики: {model_characteristics}"
+            message_text = f"Выбрана модель: {selected_company} {model_name}\n"
 
-            # Отправляем фотографию и текст сообщения
-            # context.bot.send_photo(chat_id=update.effective_chat.id, photo=model_photo, caption=message_text,
-            #                        reply_markup=reply_markup)
             query.edit_message_text(text=message_text, reply_markup=reply_markup)
 
 
