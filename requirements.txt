@@ -49,3 +49,4 @@ requests==2.31.0
 uvicorn==0.23.2
 unstructured==0.10.16
 tiktoken==0.5.1
+gspread==4.0.1
