@@ -113,17 +113,17 @@ companies = {
                 "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
                 "Тип двигателя": "Электрический",  # Add car type information
                 "Комплектации": {
-                    "PURE": {
-                        "description": "PURE",
+                    "Pure": {
+                        "description": "Pure",
                     },
-                    "PURE +": {
-                        "description": "PURE +",
+                    "Pure +": {
+                        "description": "Pure +",
                     },
-                    "PRO": {
-                        "description": "PRO",
+                    "Pro": {
+                        "description": "Pro",
                     },
-                    "PRIME": {
-                        "description": "PRIME",
+                    "Prime": {
+                        "description": "Prime",
                     },
                 },
             },
@@ -134,10 +134,10 @@ companies = {
                 "Тип двигателя": "Электрический",  # Add car type information
                 "Комплектации": {
                     "PURE": {
-                        "description": "PURE",
+                        "description": "Pure",
                     },
                     "PRIME": {
-                        "description": "PRIME",
+                        "description": "Prime",
                     },
                 },
             },

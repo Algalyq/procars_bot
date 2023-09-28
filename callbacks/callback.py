@@ -104,8 +104,8 @@ def callback_configuration(update, context):
                                     price_100_tg = row[14]
                                     message_text = (
                                             f"Комплектация: {description}\n"
-                                            f"Цена в $:При 30/70 оплате {price_30} (При 100% оплате {price_100})\n"
-                                            f"Цена в ₸:При 30/70 оплате {price_30_tg} (При 100% оплате {price_100_tg})\n"
+                                            f"Цена в $: При 30/70 оплате {price_30} (При 100% оплате {price_100})\n"
+                                            f"Цена в ₸: При 30/70 оплате {price_30_tg} (При 100% оплате {price_100_tg})\n"
                                             f"Привод: {drive}\n"
                                             f"Мощность: {power}\n"
                                             f"Емкость батареи: {capacity}\n"
@@ -147,8 +147,8 @@ def callback_configuration(update, context):
                                     price_100_tg = row[14]
                                     message_text = (
                                             f"Комплектация: {description}\n"
-                                            f"Цена в $:При 30/70 оплате {price_30} (При 100% оплате {price_100})\n"
-                                            f"Цена в ₸:При 30/70 оплате {price_30_tg} (При 100% оплате {price_100_tg})\n"
+                                            f"Цена в $: При 30/70 оплате {price_30} (При 100% оплате {price_100})\n"
+                                            f"Цена в ₸: При 30/70 оплате {price_30_tg} (При 100% оплате {price_100_tg})\n"
                                             f"Привод: {drive}\n"
                                             f"Мощность: {power}\n"
                                             f"Емкость батареи: {capacity}\n"

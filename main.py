@@ -51,17 +51,10 @@ def start(update, context):
 
 def show_car_companies(update, context):
     keyboard = []
-    data = fetch_data()
-
-    unique_companies = set()
-
-    for row in data[1:]:
-        company = row[0]
-        if company:
-            unique_companies.add(company)
+    
 
 
-    for company in unique_companies:
+    for company in companies.keys():
         keyboard.append([InlineKeyboardButton(company, callback_data=f'company:{company}')])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
