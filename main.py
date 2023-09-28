@@ -38,7 +38,7 @@ def start(update, context):
     user_id = user.id
     if user_id not in introduction_sent:
         instructions = (
-            f"Привет, {user.mention_html()} , { user }!\n"
+            f"Добро пожаловать в Profusion Cars!\n"
             "Я чат бот компаний Profusion Cars. Я помогу вам найти ответы на вопросы касаемо машины, комплектаций, цены и т.д.\n"
             "Вы можете задать вопрос в чат бот или через /questions посмотреть ответы на часто задаваемые вопросы \n\n"
             "Доступные команды:\n"

@@ -100,14 +100,17 @@ def callback_configuration(update, context):
                                     max_speed = row[10]
                                     price_30 = row[11]
                                     price_100 = row[12]
+                                    price_30_tg = row[13]
+                                    price_100_tg = row[14]
                                     message_text = (
                                             f"Комплектация: {description}\n"
-                                            f"Цена:При 30/70% оплате {price_30} (При 100% {price_100})\n"
+                                            f"Цена в $:При 30/70 оплате {price_30} (При 100% оплате {price_100})\n"
+                                            f"Цена в ₸:При 30/70 оплате {price_30_tg} (При 100% оплате {price_100_tg})\n"
                                             f"Привод: {drive}\n"
                                             f"Мощность: {power}\n"
                                             f"Емкость батареи: {capacity}\n"
                                             f"Максимальная скорость: {max_speed}\n"
-                                            f"Запас хода: {pw_reserve}\n"
+                                            f"Запас хода: {pw_reserve} км\n"
                                             f"Крутящий момент: {torque}\n"
                                         )
                                     
@@ -140,14 +143,17 @@ def callback_configuration(update, context):
                                     max_speed = row[10]
                                     price_30 = row[11]
                                     price_100 = row[12]
+                                    price_30_tg = row[13]
+                                    price_100_tg = row[14]
                                     message_text = (
                                             f"Комплектация: {description}\n"
-                                            f"Цена:При 30/70% оплате {price_30} (При 100% {price_100})\n"
+                                            f"Цена в $:При 30/70 оплате {price_30} (При 100% оплате {price_100})\n"
+                                            f"Цена в ₸:При 30/70 оплате {price_30_tg} (При 100% оплате {price_100_tg})\n"
                                             f"Привод: {drive}\n"
                                             f"Мощность: {power}\n"
                                             f"Емкость батареи: {capacity}\n"
                                             f"Максимальная скорость: {max_speed}\n"
-                                            f"Запас хода: {pw_reserve}\n"
+                                            f"Запас хода: {pw_reserve} км\n"
                                             f"Крутящий момент: {torque}\n"
                                         )
                                     
