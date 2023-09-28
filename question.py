@@ -7,8 +7,10 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 import request as req
 from validator import validation
 from telegram.ext import ConversationHandler
-
-
+from telegram import ChatAction
+import re
+from request import send_data_to_api
+import time
 
 # Define conversation states for the FSM
 USERNAME, PHONE_NUMBER, VERIFY_DATA = range(3)
@@ -30,8 +32,14 @@ def questions(update: Update, context: CallbackContext) -> None:
         reply_markup=get_questions_keyboard(),
     )
 
+def get_questions_keyboard():
+    keyboard = []
+    for question in questions_answers.keys():
+        keyboard.append([question])
+    return ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
+
 def call_manager(update: Update, context: CallbackContext) -> int:
-    update.message.reply_text("Please enter your username:")
+    update.message.reply_text("Пожалуйста напишите свое имя:")
     return USERNAME
 
 # Function to handle the username input
@@ -39,27 +47,38 @@ def receive_username(update: Update, context: CallbackContext) -> int:
     user_data = context.user_data
     user_data['username'] = update.message.text
 
-    update.message.reply_text("Please enter your phone number:")
+    update.message.reply_text("Пожалуйста напишите свой номер телефон:")
     return PHONE_NUMBER
+
 
 # Function to handle the phone number input
 def receive_phone_number(update: Update, context: CallbackContext) -> int:
     user_data = context.user_data
-    user_data['phone_number'] = update.message.text
+    phone_number = update.message.text.strip()  # Remove leading/trailing spaces
 
-    # Create a custom keyboard with "Yes" and "No" buttons to verify data
-    keyboard = [
-        [InlineKeyboardButton("Yes", callback_data='yes')],
-        [InlineKeyboardButton("No", callback_data='no')]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    # Define a regular expression pattern to match a valid phone number format
+    phone_number_pattern = r'^\+?\d{11,12}$'  # Modify the pattern as needed
 
-    update.message.reply_text(
-        f"Username: {user_data['username']}\nPhone Number: {user_data['phone_number']}\n\n"
-        "Is this data correct? Please select 'Yes' or 'No' to verify.",
-        reply_markup=reply_markup,
-    )
-    return VERIFY_DATA
+    if re.match(phone_number_pattern, phone_number):
+        user_data['phone_number'] = phone_number
+
+        # Create a custom keyboard with "Yes" and "No" buttons to verify data
+        keyboard = [
+            [InlineKeyboardButton("Да", callback_data='yes')],
+            [InlineKeyboardButton("Нет", callback_data='no')]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        update.message.reply_text(
+            f"Имя: {user_data['username']}\nНомер телефона: {user_data['phone_number']}\n\n"
+            "Верны ли эти данные? Пожалуйста, выберите Да или Нет для подтверждения.",
+            reply_markup=reply_markup,
+        )
+        return VERIFY_DATA
+    else:
+        update.message.reply_text("Пожалуйста, введите корректный номер телефона в формате +77011234567.")
+        return PHONE_NUMBER
+
 
 def verify_data(update, context):
     query = update.callback_query
@@ -68,11 +87,10 @@ def verify_data(update, context):
     if query.data == 'yes':
         # Data is correct, set the 'verified' flag to True
         user_data['verified'] = True
-        query.answer("Data verified. You can now ask questions using ChatGPT.")
-
+        send_data_to_api(user_data['username'],user_data['phone_number'])
+        query.edit_message_text("Спасибо за вашу заявку, наши менеджеры вам позвонят в скором времени")
     elif query.data == 'no':
-        # Data is incorrect, reset the conversation
-        query.answer("Data not verified. Please start over.")
+        query.edit_message_text(text="Пожалуйста напишите /call чтобы оформить звонок от менеджера")
         return ConversationHandler.END
 
 def handle_text_message(update, context):
@@ -82,13 +100,14 @@ def handle_text_message(update, context):
         # If the user's data is verified, check if the message is a question
         if user_message in questions_answers:
             answer = questions_answers[user_message]
+            context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
+
             update.message.reply_text(answer)
         else:
             # If not a question, proceed with ChatGPT interactions
+            context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
             chatgpt_response = bot(user_message)  # Use your ChatGPT function here
             update.message.reply_text(chatgpt_response)
     else:
         # If the user's data is not verified, you can handle other interactions here
-        update.message.reply_text("Please verify your data first by typing /call and providing your username and phone number.")
-
-
+        update.message.reply_text("Пожалуйста, сначала подтвердите свои данные, набрав /call и указав свое имя пользователя и номер телефона.")

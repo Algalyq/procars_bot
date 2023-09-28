@@ -5,8 +5,9 @@ from question import questions
 from company import companies
 from google.googleid import fetch_data
 
+from telegram import ChatAction
 
-# Обработчик для кнопок выбора компании
+
 def callback_button(update, context):
     query = update.callback_query
     query.answer()
@@ -14,7 +15,6 @@ def callback_button(update, context):
     data = query.data.split(':')
     company_name = data[1]
 
-    # Сохраняем выбранную компанию в контексте пользователя
     context.user_data["selected_company"] = company_name
   
     if company_name in companies:
@@ -59,17 +59,14 @@ def callback_choose_model(update, context):
             query.edit_message_text(text=message_text, reply_markup=reply_markup)
 
 
-
-def callback_call(update, context):
+def callback_call_manager(update, context):
     query = update.callback_query
-    user = update.effective_user
-    user_id = user.id
-    query.edit_message_text(text=f"{user.first_name}, напишите ваш номер телефон. Например: +77081234567")
+    query.answer()
+    query.edit_message_text(text="Пожалуйста напишите /call чтобы оформить звонок от менеджера")
 
 def callback_configuration(update, context):
     query = update.callback_query
     query.answer()
-
 
     data_google = fetch_data()
     data = query.data.split(':')
@@ -93,6 +90,7 @@ def callback_configuration(update, context):
                                 and row[1] == str(int(selected_model))
                                 and row[2] == description):
                                     print(row)
+                                    
                                     power = row[4]
                                     capacity = row[5]
                                     year = row[6]
@@ -122,7 +120,6 @@ def callback_configuration(update, context):
 
                                     reply_markup = InlineKeyboardMarkup(keyboard)
 
-                                    # Update the existing message's caption with new information
                                     query.message.caption = message_text
                                     query.message.reply_markup = reply_markup
                                     query.edit_message_text(text=message_text, reply_markup=reply_markup)
@@ -133,6 +130,7 @@ def callback_configuration(update, context):
                                 and row[1] == selected_model
                                 and row[2] == description):
                                     print(row)
+                                    
                                     power = row[4]
                                     capacity = row[5]
                                     year = row[6]
@@ -155,18 +153,16 @@ def callback_configuration(update, context):
                                     
 
                                     keyboard = [
-                                        [InlineKeyboardButton("Звонок от менеджера", callback_data=f'call')],
+                                        [InlineKeyboardButton("Звонок от менеджера", callback_data='call_manager')],
                                         [InlineKeyboardButton("Назад к моделям", callback_data=f'back_to_models')],
                                         [InlineKeyboardButton("Назад к компаниям", callback_data=f'back_to_companies')],
                                     ]
 
                                     reply_markup = InlineKeyboardMarkup(keyboard)
 
-                                    # Update the existing message's caption with new information
                                     query.message.caption = message_text
                                     query.message.reply_markup = reply_markup
                                     query.edit_message_text(text=message_text, reply_markup=reply_markup)
-
 
 
 def callback_models(update, context):
@@ -185,19 +181,15 @@ def callback_models(update, context):
         keyboard.append([InlineKeyboardButton("Назад к компаниям", callback_data=f'back_to_companies')])
         reply_markup = InlineKeyboardMarkup(keyboard)
 
-        # Define the new text you want for the message
         new_text = 'Выберите модель автомобиля:'
 
-        # Use the edit_message_text method to update the text and reply_markup
         query.edit_message_text(
             text=new_text,
             reply_markup=reply_markup,
-            parse_mode='Markdown'  # You can specify the parsing mode if needed
-        )
+            parse_mode='Markdown')
 
 
 
-# Обработчик для кнопки "Назад" от компании к списку компаний
 def callback_companies(update, context):
     query = update.callback_query
     query.answer()
@@ -209,5 +201,4 @@ def callback_companies(update, context):
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    # Clear the caption, photo, and set the updated reply markup for the message
     query.edit_message_text(text='Выберите компанию:', reply_markup=reply_markup)
