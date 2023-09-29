@@ -42,39 +42,12 @@ companies = {
                     "description": "JOY",
                 },
                 "X-mode Pro": {
-                    "description": "X-mode Pro",
+                    "description": "X mode Pro",
                 },
             },
         },
     },
- "Geely": {
-        "Monjaro": {
-            "Год выпуска": 2023,
-            "Характеристики": "Monjaro",
-            "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
-            "Тип двигателя": "Электрический",  # Add car type information
-            "Комплектации": {
-                "Полная комплектация": {
-                    "description": "Flagship",
-                },
-            },
-        },
-        "Coolray": {
-            "Год выпуска": 2023,
-            "Характеристики": "Coolray",
-            "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
-            "Тип двигателя": "Электрический",  # Add car type information
-            "Комплектации": {
-                "Базовая комплектация": {
-                    "description": "Базовая",
-                },
-                "Полная комплектация": {
-                    "description": "Полная",
-                },
-            },
-        },
-        
-    },
+    
     "Zeekr": {
             "001": {
                 "Год выпуска": 2023,
@@ -151,7 +124,7 @@ companies = {
             "Тип двигателя": "Электрический",  # Add car type information
             "Комплектации": {
                 "Полная комплектация Flagship": {
-                    "description": "Полная комплектация Flagship",
+                    "description": "Flagship",
                 },
             },
         },
@@ -162,7 +135,7 @@ companies = {
             "Тип двигателя": "Электрический",  # Add car type information
             "Комплектации": {
                 "Полная комплектация": {
-                    "description": "Полная комплектация",
+                    "description": "Полная",
                 },
             },
         },
@@ -170,12 +143,12 @@ companies = {
   "Chevrolet": {
         "Monza": {
             "Год выпуска": 2023,
-            "Характеристики": "Song Plus",
+            "Характеристики": "Monza",
             "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
             "Тип двигателя": "Электрический",  # Add car type information
             "Комплектации": {
                 "Полная комплектация": {
-                    "description": "Полная",
+                    "description": "Полная комплектация",
                 },
             },
         },
@@ -183,23 +156,23 @@ companies = {
   "Lixiang": {
         "L9": {
             "Год выпуска": 2023,
-            "Характеристики": "Song Plus",
+            "Характеристики": "L9",
             "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
             "Тип двигателя": "Электрический",  # Add car type information
             "Комплектации": {
                 "MAX": {
-                    "description": "Max",
+                    "description": "MAX",
                 },
             },
         },
         "L7": {
             "Год выпуска": 2023,
-            "Характеристики": "Song Plus",
+            "Характеристики": "L7",
             "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
             "Тип двигателя": "Электрический",  # Add car type information
             "Комплектации": {
                 "MAX": {
-                    "description": "Max",
+                    "description": "MAX",
                 },
             },
         },
@@ -207,7 +180,7 @@ companies = {
 
 
 
-      "Changan": {
+    "Changan": {
         "UNI K": {
             "Год выпуска": 2023,
             "Характеристики": "Song Plus",
@@ -229,8 +202,34 @@ companies = {
                 "Tech": {
                     "description": "Tech",
                 },
-                "Luxe": {
-                    "description": "Luxe",
+            },
+        },
+    },
+
+
+    "Geely": {
+        "Monjaro": {
+            "Год выпуска": 2023,
+            "Характеристики": "Monjaro",
+            "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
+            "Тип двигателя": "Электрический",  # Add car type information
+            "Комплектации": {
+                "MAX": {
+                    "description": "MAX",
+                },
+            },
+        },
+        "Coolray": {
+            "Год выпуска": 2023,
+            "Характеристики": "Coolray",
+            "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
+            "Тип двигателя": "Электрический",  # Add car type information
+            "Комплектации": {
+                "MAX": {
+                    "description": "MAX",
+                },
+                "MAX2": {
+                    "description": "MAX2",
                 },
             },
         },

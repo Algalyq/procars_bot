@@ -36,8 +36,7 @@ introduction_sent = {}
 def start(update, context):
     user = update.effective_user
     user_id = user.id
-    if user_id not in introduction_sent:
-        instructions = (
+    instructions = (
             f"Добро пожаловать в Profusion Cars!\n"
             "Я чат бот компаний Profusion Cars. Я помогу вам найти ответы на вопросы касаемо машины, комплектаций, цены и т.д.\n"
             "Вы можете задать вопрос в чат бот или через /questions посмотреть ответы на часто задаваемые вопросы \n\n"
@@ -45,9 +44,8 @@ def start(update, context):
             "/questions - Показать это ответы на часто задаваемые вопросы\n"
             "/cars - Показать список машин и комплектаций, характеристики\n"
             "/call - Звонок от менеджера\n"
-        )
-        update.message.reply_html(instructions)
-        introduction_sent[user_id] = True
+    )
+    update.message.reply_html(instructions)
 
 def show_car_companies(update, context):
     keyboard = []

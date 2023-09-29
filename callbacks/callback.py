@@ -90,7 +90,6 @@ def callback_configuration(update, context):
                                 and row[1] == str(int(selected_model))
                                 and row[2] == description):
                                     print(row)
-                                    
                                     power = row[4]
                                     capacity = row[5]
                                     year = row[6]
@@ -113,7 +112,6 @@ def callback_configuration(update, context):
                                             f"Запас хода: {pw_reserve} км\n"
                                             f"Крутящий момент: {torque}\n"
                                         )
-                                    
 
                                     keyboard = [
                                         [InlineKeyboardButton("Звонок от менеджера", callback_data=f'call')],
@@ -126,14 +124,17 @@ def callback_configuration(update, context):
                                     query.message.caption = message_text
                                     query.message.reply_markup = reply_markup
                                     query.edit_message_text(text=message_text, reply_markup=reply_markup)
+
+                          
+
+
                     else: 
                         description = config_info.get("description")
                         for row in data_google:
                             if(row[0] == selected_company
                                 and row[1] == selected_model
-                                and row[2] == description):
+                                and row[2] == description and row[3] == "Electro"):
                                     print(row)
-                                    
                                     power = row[4]
                                     capacity = row[5]
                                     year = row[6]
@@ -160,6 +161,45 @@ def callback_configuration(update, context):
 
                                     keyboard = [
                                         [InlineKeyboardButton("Звонок от менеджера", callback_data='call_manager')],
+                                        [InlineKeyboardButton("Назад к моделям", callback_data=f'back_to_models')],
+                                        [InlineKeyboardButton("Назад к компаниям", callback_data=f'back_to_companies')],
+                                    ]
+
+                                    reply_markup = InlineKeyboardMarkup(keyboard)
+
+                                    query.message.caption = message_text
+                                    query.message.reply_markup = reply_markup
+                                    query.edit_message_text(text=message_text, reply_markup=reply_markup)
+
+                            elif(row[0] == selected_company
+                                and row[1] == selected_model
+                                and row[2] == description and row[3] == "DVS"):
+                                    print(row)
+                                    power = row[4]
+                                    capacity = row[5]
+                                    year = row[6]
+                                    pw_reserve = row[7]
+                                    torque = row[8]
+                                    drive = row[9]
+                                    max_speed = row[10]
+                                    price_30 = row[11]
+                                    price_100 = row[12]
+                                    price_30_tg = row[13]
+                                    price_100_tg = row[14]
+                                    message_text = (
+                                            f"Комплектация: {description}\n"
+                                            f"Цена в $: При 30/70 оплате {price_30} (При 100% оплате {price_100})\n"
+                                            f"Цена в ₸: При 30/70 оплате {price_30_tg} (При 100% оплате {price_100_tg})\n"
+                                            f"Привод: {drive}\n"
+                                            f"Мощность: {power}\n"
+                                            f"Объем двигателя: {capacity}\n"
+                                            f"Максимальная скорость: {max_speed}\n"
+                                            f"Расход топлива в смешанном цикле: {pw_reserve} \n"
+                                            f"Объем топливного бака: {torque}\n"
+                                        )
+
+                                    keyboard = [
+                                        [InlineKeyboardButton("Звонок от менеджера", callback_data=f'call')],
                                         [InlineKeyboardButton("Назад к моделям", callback_data=f'back_to_models')],
                                         [InlineKeyboardButton("Назад к компаниям", callback_data=f'back_to_companies')],
                                     ]
