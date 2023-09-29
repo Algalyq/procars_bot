@@ -55,7 +55,7 @@ companies = {
             "Тип двигателя": "Электрический",  # Add car type information
             "Комплектации": {
                 "Полная комплектация": {
-                    "description": "Полная комплектация",
+                    "description": "Flagship",
                 },
             },
         },
@@ -66,10 +66,10 @@ companies = {
             "Тип двигателя": "Электрический",  # Add car type information
             "Комплектации": {
                 "Базовая комплектация": {
-                    "description": "Базовая комплектация",
+                    "description": "Базовая",
                 },
                 "Полная комплектация": {
-                    "description": "Полная комплектация",
+                    "description": "Полная",
                 },
             },
         },
@@ -163,6 +163,74 @@ companies = {
             "Комплектации": {
                 "Полная комплектация": {
                     "description": "Полная комплектация",
+                },
+            },
+        },
+    },
+  "Chevrolet": {
+        "Monza": {
+            "Год выпуска": 2023,
+            "Характеристики": "Song Plus",
+            "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
+            "Тип двигателя": "Электрический",  # Add car type information
+            "Комплектации": {
+                "Полная комплектация": {
+                    "description": "Полная",
+                },
+            },
+        },
+    },
+  "Lixiang": {
+        "L9": {
+            "Год выпуска": 2023,
+            "Характеристики": "Song Plus",
+            "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
+            "Тип двигателя": "Электрический",  # Add car type information
+            "Комплектации": {
+                "MAX": {
+                    "description": "Max",
+                },
+            },
+        },
+        "L7": {
+            "Год выпуска": 2023,
+            "Характеристики": "Song Plus",
+            "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
+            "Тип двигателя": "Электрический",  # Add car type information
+            "Комплектации": {
+                "MAX": {
+                    "description": "Max",
+                },
+            },
+        },
+    },
+
+
+
+      "Changan": {
+        "UNI K": {
+            "Год выпуска": 2023,
+            "Характеристики": "Song Plus",
+            "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
+            "Тип двигателя": "Электрический",  # Add car type information
+            "Комплектации": {
+                "Tech": {
+                    "description": "Tech",
+                },
+                
+            },
+        },
+        "UNI T": {
+            "Год выпуска": 2023,
+            "Характеристики": "Song Plus",
+            "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
+            "Тип двигателя": "Электрический",  # Add car type information
+            "Комплектации": {
+                "Tech": {
+                    "description": "Tech",
+                },
+                "Luxe": {
+                    "description": "Luxe",
                 },
             },
         },
