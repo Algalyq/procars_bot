@@ -64,6 +64,36 @@ def callback_call_manager(update, context):
     query.answer()
     query.edit_message_text(text="Пожалуйста напишите /call чтобы оформить звонок от менеджера")
 
+
+def get_config_info(data_google, selected_company, selected_model, config_name):
+    for row in data_google:
+        if (
+            row[0] == selected_company
+            and row[1] == selected_model
+            and row[2] == config_name
+        ):
+            return row
+    return None
+
+def generate_message_text(config_info):
+    print(config_info)
+    if config_info:
+        description,vehicle_type, power, capacity, year, pw_reserve, torque, drive, max_speed, price_30, price_100, price_30_tg, price_100_tg = config_info[2:15]
+        
+        message_text = (
+            f"Комплектация: {description}\n"
+            f"Цена в $: При 30/70 оплате {price_30} (При 100% оплате {price_100})\n"
+            f"Цена в ₸: При 30/70 оплате {price_30_tg} (При 100% оплате {price_100_tg})\n"
+            f"Привод: {drive}\n"
+            f"Мощность: {power}\n"
+            f"{'Емкость батареи' if vehicle_type == 'Electro' else 'Объем двигателя'}: {capacity}\n"
+            f"Максимальная скорость: {max_speed}\n"
+            f"{'Запас хода' if vehicle_type == 'Electro' else 'Расход топлива в смешанном цикле'}: {pw_reserve}\n"
+            f"{'Крутящий момент' if vehicle_type == 'Electro' else 'Объем топливного бака'}: {torque}\n"
+        )
+        return message_text
+    return "Комплектация не найдена."
+
 def callback_configuration(update, context):
     query = update.callback_query
     query.answer()
@@ -82,134 +112,29 @@ def callback_configuration(update, context):
             if "Комплектации" in model_info:
                 configurations = model_info["Комплектации"]
                 if config_name in configurations:
-                    config_info = configurations[config_name]
-                    if selected_model == "001":
-                        description = config_info.get("description")
-                        for row in data_google:
-                            if(row[0] == selected_company
-                                and row[1] == str(int(selected_model))
-                                and row[2] == description):
-                                    print(row)
-                                    power = row[4]
-                                    capacity = row[5]
-                                    year = row[6]
-                                    pw_reserve = row[7]
-                                    torque = row[8]
-                                    drive = row[9]
-                                    max_speed = row[10]
-                                    price_30 = row[11]
-                                    price_100 = row[12]
-                                    price_30_tg = row[13]
-                                    price_100_tg = row[14]
-                                    message_text = (
-                                            f"Комплектация: {description}\n"
-                                            f"Цена в $: При 30/70 оплате {price_30} (При 100% оплате {price_100})\n"
-                                            f"Цена в ₸: При 30/70 оплате {price_30_tg} (При 100% оплате {price_100_tg})\n"
-                                            f"Привод: {drive}\n"
-                                            f"Мощность: {power}\n"
-                                            f"Емкость батареи: {capacity}\n"
-                                            f"Максимальная скорость: {max_speed}\n"
-                                            f"Запас хода: {pw_reserve} км\n"
-                                            f"Крутящий момент: {torque}\n"
-                                        )
+                    print(config_name)
+                    config_info = get_config_info(data_google, selected_company, selected_model, config_name)
+                    message_text = generate_message_text(config_info)
 
-                                    keyboard = [
-                                        [InlineKeyboardButton("Звонок от менеджера", callback_data=f'call')],
-                                        [InlineKeyboardButton("Назад к моделям", callback_data=f'back_to_models')],
-                                        [InlineKeyboardButton("Назад к компаниям", callback_data=f'back_to_companies')],
-                                    ]
+                    keyboard = [
+                        [InlineKeyboardButton("Звонок от менеджера", callback_data=f'call')],
+                        [InlineKeyboardButton("Назад к моделям", callback_data=f'back_to_models')],
+                        [InlineKeyboardButton("Назад к компаниям", callback_data=f'back_to_companies')],
+                    ]
 
-                                    reply_markup = InlineKeyboardMarkup(keyboard)
+                    reply_markup = InlineKeyboardMarkup(keyboard)
 
-                                    query.message.caption = message_text
-                                    query.message.reply_markup = reply_markup
-                                    query.edit_message_text(text=message_text, reply_markup=reply_markup)
-
-                          
-
-
-                    else: 
-                        description = config_info.get("description")
-                        for row in data_google:
-                            if(row[0] == selected_company
-                                and row[1] == selected_model
-                                and row[2] == description and row[3] == "Electro"):
-                                    print(row)
-                                    power = row[4]
-                                    capacity = row[5]
-                                    year = row[6]
-                                    pw_reserve = row[7]
-                                    torque = row[8]
-                                    drive = row[9]
-                                    max_speed = row[10]
-                                    price_30 = row[11]
-                                    price_100 = row[12]
-                                    price_30_tg = row[13]
-                                    price_100_tg = row[14]
-                                    message_text = (
-                                            f"Комплектация: {description}\n"
-                                            f"Цена в $: При 30/70 оплате {price_30} (При 100% оплате {price_100})\n"
-                                            f"Цена в ₸: При 30/70 оплате {price_30_tg} (При 100% оплате {price_100_tg})\n"
-                                            f"Привод: {drive}\n"
-                                            f"Мощность: {power}\n"
-                                            f"Емкость батареи: {capacity}\n"
-                                            f"Максимальная скорость: {max_speed}\n"
-                                            f"Запас хода: {pw_reserve} км\n"
-                                            f"Крутящий момент: {torque}\n"
-                                        )
-                                    
-
-                                    keyboard = [
-                                        [InlineKeyboardButton("Звонок от менеджера", callback_data='call_manager')],
-                                        [InlineKeyboardButton("Назад к моделям", callback_data=f'back_to_models')],
-                                        [InlineKeyboardButton("Назад к компаниям", callback_data=f'back_to_companies')],
-                                    ]
-
-                                    reply_markup = InlineKeyboardMarkup(keyboard)
-
-                                    query.message.caption = message_text
-                                    query.message.reply_markup = reply_markup
-                                    query.edit_message_text(text=message_text, reply_markup=reply_markup)
-
-                            elif(row[0] == selected_company
-                                and row[1] == selected_model
-                                and row[2] == description and row[3] == "DVS"):
-                                    print(row)
-                                    power = row[4]
-                                    capacity = row[5]
-                                    year = row[6]
-                                    pw_reserve = row[7]
-                                    torque = row[8]
-                                    drive = row[9]
-                                    max_speed = row[10]
-                                    price_30 = row[11]
-                                    price_100 = row[12]
-                                    price_30_tg = row[13]
-                                    price_100_tg = row[14]
-                                    message_text = (
-                                            f"Комплектация: {description}\n"
-                                            f"Цена в $: При 30/70 оплате {price_30} (При 100% оплате {price_100})\n"
-                                            f"Цена в ₸: При 30/70 оплате {price_30_tg} (При 100% оплате {price_100_tg})\n"
-                                            f"Привод: {drive}\n"
-                                            f"Мощность: {power}\n"
-                                            f"Объем двигателя: {capacity}\n"
-                                            f"Максимальная скорость: {max_speed}\n"
-                                            f"Расход топлива в смешанном цикле: {pw_reserve} \n"
-                                            f"Объем топливного бака: {torque}\n"
-                                        )
-
-                                    keyboard = [
-                                        [InlineKeyboardButton("Звонок от менеджера", callback_data=f'call')],
-                                        [InlineKeyboardButton("Назад к моделям", callback_data=f'back_to_models')],
-                                        [InlineKeyboardButton("Назад к компаниям", callback_data=f'back_to_companies')],
-                                    ]
-
-                                    reply_markup = InlineKeyboardMarkup(keyboard)
-
-                                    query.message.caption = message_text
-                                    query.message.reply_markup = reply_markup
-                                    query.edit_message_text(text=message_text, reply_markup=reply_markup)
-
+                    query.message.caption = message_text
+                    query.message.reply_markup = reply_markup
+                    query.edit_message_text(text=message_text, reply_markup=reply_markup)
+                else:
+                    query.edit_message_text(text="Комплектация не найдена.")
+            else:
+                query.edit_message_text(text="Данные о комплектациях отсутствуют.")
+        else:
+            query.edit_message_text(text="Модель не найдена.")
+    else:
+        query.edit_message_text(text="Компания или модель не выбрана.")
 
 def callback_models(update, context):
     query = update.callback_query

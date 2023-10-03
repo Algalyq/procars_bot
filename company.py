@@ -214,8 +214,8 @@ companies = {
             "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
             "Тип двигателя": "Электрический",  # Add car type information
             "Комплектации": {
-                "MAX": {
-                    "description": "MAX",
+                "Flagship": {
+                    "description": "Flagship",
                 },
             },
         },
@@ -225,11 +225,11 @@ companies = {
             "Фото": "https://static.tildacdn.com/stor6436-3264-4432-b764-366463343961/32280260.jpg",
             "Тип двигателя": "Электрический",  # Add car type information
             "Комплектации": {
-                "MAX": {
-                    "description": "MAX",
+                "Базовый": {
+                    "description": "Базовый",
                 },
-                "MAX2": {
-                    "description": "MAX2",
+                "Полный": {
+                    "description": "Полный",
                 },
             },
         },

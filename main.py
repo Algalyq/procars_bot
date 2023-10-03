@@ -14,6 +14,7 @@ import telebot
 from google.googleid import fetch_data
 import gspread
 from telegram.ext import ConversationHandler
+from strings import *
 
 TOKEN = os.getenv("TOKEN")
 
@@ -37,27 +38,18 @@ def start(update, context):
     user = update.effective_user
     user_id = user.id
     instructions = (
-            f"Добро пожаловать в Profusion Cars!\n"
-            "Я чат бот компаний Profusion Cars. Я помогу вам найти ответы на вопросы касаемо машины, комплектаций, цены и т.д.\n"
-            "Вы можете задать вопрос в чат бот или через /questions посмотреть ответы на часто задаваемые вопросы \n\n"
-            "Доступные команды:\n"
-            "/questions - Показать это ответы на часто задаваемые вопросы\n"
-            "/cars - Показать список машин и комплектаций, характеристики\n"
-            "/call - Звонок от менеджера\n"
+        instructions_str
     )
     update.message.reply_html(instructions)
 
 def show_car_companies(update, context):
     keyboard = []
-    
-
-
     for company in companies.keys():
         keyboard.append([InlineKeyboardButton(company, callback_data=f'company:{company}')])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    update.message.reply_text('Выберите компанию:', reply_markup=reply_markup)
+    update.message.reply_text(choose_company, reply_markup=reply_markup)
 
 dispatcher.add_handler(CommandHandler('start', start))
 dispatcher.add_handler(CommandHandler('cars', show_car_companies))
