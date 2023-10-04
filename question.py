@@ -9,6 +9,7 @@ from validator import validation
 from telegram.ext import ConversationHandler
 from telegram import ChatAction
 import re
+from google.googleid import fetch_data_question
 from request import send_data_to_api
 import time
 from strings import *
@@ -27,7 +28,7 @@ def questions(update: Update, context: CallbackContext) -> None:
 
 def get_questions_keyboard():
     keyboard = []
-    for question in questions_answers.keys():
+    for question in fetch_data_question().keys():
         keyboard.append([question])
     return ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
 
@@ -39,7 +40,6 @@ def call_manager(update: Update, context: CallbackContext) -> int:
 def receive_username(update: Update, context: CallbackContext) -> int:
     user_data = context.user_data
     user_data['username'] = update.message.text
-
     update.message.reply_text(input_phone_number)
     return PHONE_NUMBER
 
@@ -90,10 +90,9 @@ def handle_text_message(update, context):
 
     if context.user_data.get('verified', True):
         # If the user's data is verified, check if the message is a question
-        if user_message in questions_answers:
-            answer = questions_answers[user_message]
+        if user_message in fetch_data_question().keys():
             context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
-
+            answer = fetch_data_question().get(user_message)
             update.message.reply_text(answer)
         else:
             # If not a question, proceed with ChatGPT interactions

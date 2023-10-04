@@ -1,26 +1,31 @@
 import logging
+from dotenv import load_dotenv
+import os
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler,MessageHandler,Filters
+from telegram.ext import Updater,CallbackContext, CommandHandler, CallbackQueryHandler,MessageHandler,Filters
 from question import questions
 from company import companies
+import telebot 
 from google.googleid import fetch_data
-
+from telegram import InputMediaPhoto
 from telegram import ChatAction
+
+
+TOKEN = os.getenv("TOKEN")
+
+bot = telebot.TeleBot(TOKEN)
 
 
 def callback_button(update, context):
     query = update.callback_query
     query.answer()
-
     data = query.data.split(':')
     company_name = data[1]
 
     context.user_data["selected_company"] = company_name
-  
     if company_name in companies:
         models_for_company = companies[company_name]
         keyboard = []
-
         for model_name in models_for_company.keys():
             keyboard.append([InlineKeyboardButton(model_name, callback_data=f'model:{model_name}')])
 
@@ -66,6 +71,8 @@ def callback_call_manager(update, context):
 
 
 def get_config_info(data_google, selected_company, selected_model, config_name):
+    if selected_model == "001":
+        selected_model = str(1)
     for row in data_google:
         if (
             row[0] == selected_company
@@ -90,7 +97,19 @@ def generate_message_text(config_info):
             f"Максимальная скорость: {max_speed}\n"
             f"{'Запас хода' if vehicle_type == 'Electro' else 'Расход топлива в смешанном цикле'}: {pw_reserve}\n"
             f"{'Крутящий момент' if vehicle_type == 'Electro' else 'Объем топливного бака'}: {torque}\n"
+            f"Наш номер: +7 700 807 92 92 \n"
         )
+        return message_text
+    return "Комплектация не найдена."
+
+def choosed_car_model(config_info):
+
+    if config_info:
+        company,car,description,vehicle_type, power, capacity, year, pw_reserve, torque, drive, max_speed, price_30, price_100, price_30_tg, price_100_tg = config_info[0:15]
+        message_text = (
+            f"Вы выбрали: {company} {car} {description} \n"
+        )
+        
         return message_text
     return "Комплектация не найдена."
 
@@ -101,10 +120,8 @@ def callback_configuration(update, context):
     data_google = fetch_data()
     data = query.data.split(':')
     config_name = data[1]
-
     selected_model = context.user_data.get("selected_model")
     selected_company = context.user_data.get("selected_company")
-
     if selected_company and selected_company in companies and selected_model:
         models_for_company = companies[selected_company]
         if selected_model in models_for_company:
@@ -112,21 +129,30 @@ def callback_configuration(update, context):
             if "Комплектации" in model_info:
                 configurations = model_info["Комплектации"]
                 if config_name in configurations:
-                    print(config_name)
                     config_info = get_config_info(data_google, selected_company, selected_model, config_name)
                     message_text = generate_message_text(config_info)
-
+                    print(f"test: {config_name}")
+                    message_text_2 = choosed_car_model(config_info)
+                    image_url = config_info[15]
                     keyboard = [
-                        [InlineKeyboardButton("Звонок от менеджера", callback_data=f'call')],
+                        [InlineKeyboardButton("Звонок от менеджера", callback_data=f'call_manager')],
                         [InlineKeyboardButton("Назад к моделям", callback_data=f'back_to_models')],
                         [InlineKeyboardButton("Назад к компаниям", callback_data=f'back_to_companies')],
                     ]
-
+                    media_group = []
                     reply_markup = InlineKeyboardMarkup(keyboard)
-
-                    query.message.caption = message_text
-                    query.message.reply_markup = reply_markup
-                    query.edit_message_text(text=message_text, reply_markup=reply_markup)
+                    if image_url:
+                        image_urls_list = [url.strip() for url in image_url.split(',')]
+                        for num, image_path in enumerate(image_urls_list):
+                            media_group.append(InputMediaPhoto(image_path,caption = message_text if num == 0 else ''))
+                        
+                        query.delete_message()
+ 
+                        context.bot.send_media_group(chat_id=query.message.chat_id, media=media_group)   
+                        context.bot.send_message(chat_id=query.message.chat_id,text=message_text_2,reply_markup=reply_markup)
+                         
+                    else:
+                        query.edit_message_text(text=message_text,reply_markup=reply_markup)
                 else:
                     query.edit_message_text(text="Комплектация не найдена.")
             else:
@@ -135,6 +161,7 @@ def callback_configuration(update, context):
             query.edit_message_text(text="Модель не найдена.")
     else:
         query.edit_message_text(text="Компания или модель не выбрана.")
+
 
 def callback_models(update, context):
     query = update.callback_query
@@ -164,7 +191,6 @@ def callback_models(update, context):
 def callback_companies(update, context):
     query = update.callback_query
     query.answer()
-
     keyboard = []
 
     for company in companies.keys():

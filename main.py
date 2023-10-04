@@ -69,7 +69,7 @@ conversation_handler = ConversationHandler(
         fallbacks=[]
     )
 dispatcher.add_handler(conversation_handler)
-dispatcher.add_handler(CallbackQueryHandler(callback_call_manager, pattern='^call_manager?'))
+dispatcher.add_handler(CallbackQueryHandler(callback_call_manager, pattern='^call_manager:$'))
 dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_text_message))
 
 @app.route('/')
