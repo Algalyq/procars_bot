@@ -81,6 +81,7 @@ def verify_data(update, context):
         user_data['verified'] = True
         send_data_to_api(user_data['username'],user_data['phone_number'])
         query.edit_message_text(text=manager_call)
+        
     elif query.data == 'no':
         query.edit_message_text(text=call_command_text)
         return ConversationHandler.END
@@ -101,4 +102,6 @@ def handle_text_message(update, context):
             update.message.reply_text(chatgpt_response)
     else:
         # If the user's data is not verified, you can handle other interactions here
-        update.message.reply_text(verify_data)
+        context.bot.send_message(chat_id=update.effective_chat.id, text=verify_data_text)
+
+

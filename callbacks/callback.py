@@ -128,6 +128,7 @@ def callback_configuration(update, context):
             model_info = models_for_company[selected_model]
             if "Комплектации" in model_info:
                 configurations = model_info["Комплектации"]
+                context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
                 if config_name in configurations:
                     config_info = get_config_info(data_google, selected_company, selected_model, config_name)
                     message_text = generate_message_text(config_info)
