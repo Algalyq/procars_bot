@@ -138,7 +138,7 @@ def callback_configuration(update, context):
                     keyboard = [
                         [InlineKeyboardButton("Звонок от менеджера", callback_data=f'call_manager')],
                         [InlineKeyboardButton("Назад к моделям", callback_data=f'back_to_models')],
-                        [InlineKeyboardButton("Назад к компаниям", callback_data=f'back_to_companies')],
+                        [InlineKeyboardButton("Назад к брендам", callback_data=f'back_to_companies')],
                     ]
                     media_group = []
                     reply_markup = InlineKeyboardMarkup(keyboard)
