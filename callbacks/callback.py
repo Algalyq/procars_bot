@@ -89,15 +89,15 @@ def generate_message_text(config_info):
         
         message_text = (
             f"Комплектация: {description}\n"
-            f"Цена в $: При 30/70 оплате {price_30} (При 100% оплате {price_100})\n"
-            f"Цена в ₸: При 30/70 оплате {price_30_tg} (При 100% оплате {price_100_tg})\n"
+            f"Цена в $: При 30/70 оплате {price_30} (Для того чтобы узнать размер скидки при 100% оплате, закажите звонок от менеджера)\n"
+            f"Цена в ₸: При 30/70 оплате {price_30_tg}\n"
             f"Привод: {drive}\n"
             f"Мощность: {power}\n"
             f"{'Емкость батареи' if vehicle_type == 'Electro' else 'Объем двигателя'}: {capacity}\n"
             f"Максимальная скорость: {max_speed}\n"
             f"{'Запас хода' if vehicle_type == 'Electro' else 'Расход топлива в смешанном цикле'}: {pw_reserve}\n"
             f"{'Крутящий момент' if vehicle_type == 'Electro' else 'Объем топливного бака'}: {torque}\n"
-            f"Наш номер: +7 700 807 92 92 \n"
+            f"Наш номер: +77008079292 \n"
         )
         return message_text
     return "Комплектация не найдена."
