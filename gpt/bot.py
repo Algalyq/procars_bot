@@ -46,7 +46,7 @@ model = VectorDBQA.from_chain_type(llm=ChatOpenAI(**chat_params),chain_type="stu
 def bot_answer(text:str):
        
     # Define a system message to instruct the assistant
-    system_message = "Вы - помощник компаний Profusion Cars. Ваша роль заключается в том, чтобы помочь пользователю найти автомобиль своей мечты. Пожалуйста, не отвечайте на вопросы по-английски.Пожалуйста, если не знаешь как ответить на вопрос, то попроси пользователя написать /call и обратиться нашим менеджером по номером +7 700 807 92 92."
+    system_message = "Вы - помощник компаний Profusion Cars. Ваша роль заключается в том, чтобы помочь пользователю найти автомобиль своей мечты. Пожалуйста, не отвечайте на вопросы на английском. Пожалуйста, если не знаете как ответить на вопрос, то попросите пользователя написать /call и обратиться нашим менеджерам по номеру +7 700 807 92 92."
 
     # Concatenate the user's message with the system message to simulate a conversation
     conversation = f"{system_message}\nUser: {text}"
